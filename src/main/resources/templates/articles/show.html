@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/application.html}">
+
+  <section layout:fragment="header">
+    Просмотр статьи
+  </section>
+
+  <section layout:fragment="content" th:object="${article}">
+    <div class="card">
+      <div class="card-header bg-secondary text-white">
+        <h2 th:text="*{getName()}"></h2>
+      </div>
+      <div class="card-body bg-light">
+        <p class="lead" th:text="*{getDescription()}"></p>
+      </div>
+  </section>
+
+</html>

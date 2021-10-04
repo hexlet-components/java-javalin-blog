@@ -1,0 +1,73 @@
+plugins {
+  id 'application'
+  id 'checkstyle'
+  id 'com.adarshr.test-logger' version '3.0.0'
+  id 'com.github.ben-manes.versions' version '0.39.0'
+  id 'io.ebean' version '12.11.5'
+  id 'jacoco'
+}
+
+group = 'io.hexlet'
+version = '1.0-SNAPSHOT'
+
+repositories {
+  mavenCentral()
+}
+
+compileJava {
+  options.release = 16
+}
+
+application {
+  mainClass = 'io.hexlet.blog.App'
+}
+
+dependencies {
+  implementation 'io.javalin:javalin:4.0.1'
+  implementation 'org.slf4j:slf4j-simple:1.7.31'
+
+  implementation 'org.thymeleaf:thymeleaf:3.0.12.RELEASE'
+  implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'
+  implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
+  implementation 'org.webjars:bootstrap:5.1.1'
+
+  implementation 'com.h2database:h2:1.4.200'
+  implementation 'org.postgresql:postgresql:42.2.24'
+
+  implementation 'io.ebean:ebean:12.11.5'
+  implementation 'io.ebean:ebean-ddl-generator:12.11.5'
+  implementation 'io.ebean:ebean-querybean:12.11.5'
+  implementation 'io.ebean:ebean-migration:12.11.2'
+  implementation 'io.ebean:ebean-annotation:7.3'
+  annotationProcessor 'io.ebean:querybean-generator:12.11.5'
+
+  // NOTE: ebean-ddl-generator требует старые зависимости, которых нет в java 9 и выше
+  implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.5'
+  implementation 'javax.activation:activation:1.1.1'
+
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+  testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.1'
+  testImplementation 'org.assertj:assertj-core:3.21.0'
+  testImplementation 'io.ebean:ebean-test:12.11.5'
+  testImplementation 'com.konghq:unirest-java:3.13.0'
+}
+
+test {
+  useJUnitPlatform()
+}
+
+testlogger {
+  showStandardStreams true
+}
+
+checkstyle {
+  toolVersion '9.0'
+}
+
+task generateMigrations(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'io.hexlet.blog.MigrationGenerator'
+}
+
+task stage(dependsOn: ['clean', 'installDist'])
+installDist.mustRunAfter clean
