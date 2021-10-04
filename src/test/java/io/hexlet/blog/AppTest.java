@@ -68,6 +68,13 @@ class AppTest {
             assertThat(response.getStatus()).isEqualTo(200);
             assertThat(response.getBody()).contains("Привет от Хекслета!");
         }
+
+        @Test
+        void testAbout() {
+            HttpResponse<String> response = Unirest.get(baseUrl + "/about").asString();
+            assertThat(response.getStatus()).isEqualTo(200);
+            assertThat(response.getBody()).contains("Эксперименты с Javalin на Хекслете");
+        }
     }
 
     @Nested

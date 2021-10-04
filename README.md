@@ -1,5 +1,10 @@
 # java-javalin-blog
 
+[![github action status](https://github.com/hexlet-components/java-javalin-blog/workflows/Java%20CI/badge.svg)](https://github.com/hexlet-components/java-javalin-blog/actions)
+[![Maintainability](https://api.codeclimate.com/v1/badges/c26cc0a63f7cfe8bd9c1/maintainability)](https://codeclimate.com/github/hexlet-components/java-javalin-blog/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/c26cc0a63f7cfe8bd9c1/test_coverage)](https://codeclimate.com/github/hexlet-components/java-javalin-blog/test_coverage)
+
+
 [Demo on Heroku](https://java-javalin-blog.herokuapp.com/)
 
 ### Requirements
