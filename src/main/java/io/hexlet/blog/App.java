@@ -50,10 +50,10 @@ public final class App {
             path("articles", () -> {
                 get(ArticleController.listArticles);
                 post(ArticleController.createArticle);
+                get("new", ArticleController.newArticle);
                 path("{id}", () -> {
                     get(ArticleController.showArticle);
                 });
-                get("new", ArticleController.newArticle);
             });
         });
     }

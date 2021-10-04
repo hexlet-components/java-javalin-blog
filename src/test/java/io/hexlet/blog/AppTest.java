@@ -104,7 +104,17 @@ class AppTest {
         }
 
         @Test
-        void testStore() {
+        void testNew() {
+            HttpResponse<String> response = Unirest
+                .get(baseUrl + "/articles/new")
+                .asString();
+            String body = response.getBody();
+
+            assertThat(response.getStatus()).isEqualTo(200);
+        }
+
+        @Test
+        void testCreate() {
             String inputName = "new name";
             String inputDescription = "new description";
             HttpResponse<String> responsePost = Unirest
