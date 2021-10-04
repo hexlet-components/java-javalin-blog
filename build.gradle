@@ -60,6 +60,12 @@ testlogger {
   showStandardStreams true
 }
 
+jacocoTestReport {
+  reports {
+    xml.required = true
+  }
+}
+
 checkstyle {
   toolVersion '9.0'
 }
