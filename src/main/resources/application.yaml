@@ -5,9 +5,7 @@ datasource:
     password: sa
     url: "jdbc:h2:./database"
   production:
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
-    url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
+    url: ${JDBC_DATABASE_URL}
 
 ebean:
   migration:
