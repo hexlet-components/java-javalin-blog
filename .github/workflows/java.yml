@@ -25,9 +25,6 @@ jobs:
           coverageLocations: ${{github.workspace}}/build/reports/jacoco/test/jacocoTestReport.xml:jacoco
 
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -44,5 +41,4 @@ jobs:
           push: true
           cache-from: hexletcomponents/java-javalin-blog:latest
           cache-to: type=inline
-          platforms: linux/amd64,linux/arm64
           tags: hexletcomponents/java-javalin-blog:latest
