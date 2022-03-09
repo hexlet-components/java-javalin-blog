@@ -9,7 +9,7 @@
 
 ### Requirements
 
-  * JDK 16
+  * JDK 17
   * Gradle 7
   * GNU Make
 

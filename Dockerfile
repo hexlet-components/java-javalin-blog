@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN ./gradlew installDist
+RUN gradle installDist
 
 CMD build/install/java-javalin-blog/bin/java-javalin-blog
