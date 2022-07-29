@@ -13,10 +13,12 @@ import io.hexlet.blog.domain.Article;
 public final class ArticleController {
 
     public static Handler listArticles = ctx -> {
+        String term = ctx.queryParamAsClass("term", String.class).getOrDefault("");
         int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1) - 1;
         int rowsPerPage = 10;
 
         PagedList<Article> pagedArticles = new QArticle()
+            .name.icontains(term)
             .setFirstRow(page * rowsPerPage)
             .setMaxRows(rowsPerPage)
             .orderBy()
@@ -33,6 +35,7 @@ public final class ArticleController {
             .collect(Collectors.toList());
 
         ctx.attribute("articles", articles);
+        ctx.attribute("term", term);
         ctx.attribute("pages", pages);
         ctx.attribute("currentPage", currentPage);
         ctx.render("articles/index.html");

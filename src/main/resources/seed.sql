@@ -1,0 +1,18 @@
+INSERT INTO article (name, description, created_at, updated_at) VALUES
+  ('The Man Within', 'Every flight begins with a fall.', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('Consider the Lilies', 'The things I do for love.', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('The Lathe of Heaven', 'Things are not always as they seemed, much that may seem evil can be good.', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('Clouds of Witness', 'Why is it that when one man builds a wall, the next man immediately needs to know what`s on the other side?', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('Eyeless in Gaza', 'There are no heroes...in life, the monsters win.', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('Oh! To be in England', 'All dwarfs are bastards in their father`s eyes', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('A Passage to India', 'Power is a curious thing. Who lives, Who dies. Power resides where men believe it resides. It is a trick, A shadow on the wall.', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('Tender Is the Night', 'Power is a curious thing. Who lives, Who dies. Power resides where men believe it resides. It is a trick, A shadow on the wall.', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('The Last Enemy', 'Knowledge could be more valuable than gold, more deadly than a dagger.', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('I Know Why the Caged Bird Sings', 'When the snows fall and the white winds blow, the lone wolf dies but the pack survives.', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('East of Eden', 'Give me honorable enemies rather than ambitious ones, and I`ll sleep more easily by night.', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('The Moving Toyshop', 'Why is it that when one man builds a wall, the next man immediately needs to know what`s on the other side?', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('Death Be Not Proud', 'Laughter is poison to fear.', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('Dying of the Light', 'Give me honorable enemies rather than ambitious ones, and I`ll sleep more easily by night.', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('The Monkey`s Raincoat', 'Do the dead frighten you?', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('The World, the Flesh and the Devil', 'When the snows fall and the white winds blow, the lone wolf dies but the pack survives.', '2022-01-01 13:57:40', '2022-02-21 12:00:40'),
+  ('To a God Unknown', 'Fear cuts deeper than swords.', '2022-01-01 13:57:40', '2022-02-21 12:00:40');

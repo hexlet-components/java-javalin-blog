@@ -143,5 +143,18 @@ class AppTest {
             assertThat(actualArticle.getName()).isEqualTo(inputName);
             assertThat(actualArticle.getDescription()).isEqualTo(inputDescription);
         }
+
+        @Test
+        void testSearch() {
+            var queryString = "?term=man";
+            HttpResponse<String> response = Unirest
+                .get(baseUrl + "/articles" + queryString)
+                .asString();
+            String body = response.getBody();
+
+            assertThat(response.getStatus()).isEqualTo(200);
+            assertThat(body).contains("The Man Within");
+            assertThat(body).doesNotContain("Consider the Lilies");
+        }
     }
 }
