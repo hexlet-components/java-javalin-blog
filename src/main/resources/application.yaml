@@ -5,14 +5,18 @@ datasource:
     password: sa
     url: "jdbc:h2:./database"
   production:
-    username: ${JDBC_DATABASE_USERNAME}
-    password: ${JDBC_DATABASE_PASSWORD}
-    url: ${JDBC_DATABASE_URL}
+    # https://devcenter.heroku.com/articles/connecting-to-relational-databases-on-heroku-with-java#using-the-jdbc_database_url
+    # username: ${JDBC_DATABASE_USERNAME}
+    # password: ${JDBC_DATABASE_PASSWORD}
+    # url: ${JDBC_DATABASE_URL}
+    username: sa
+    password: sa
+    url: "jdbc:h2:./database"
 
 ebean:
   ddl:
     run: true
     generate: true
     seedSql: seed.sql
-  migration:
-    run: true
+  # migration:
+  #   run: true
