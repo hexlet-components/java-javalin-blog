@@ -6,4 +6,4 @@ COPY . .
 
 RUN gradle installDist
 
-CMD APP_ENV=production ./build/install/java-javalin-blog/bin/java-javalin-blog
+CMD ./build/install/java-javalin-blog/bin/java-javalin-blog
