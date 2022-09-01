@@ -3,9 +3,8 @@ package io.hexlet.blog;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,7 +12,7 @@ import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import io.javalin.Javalin;
 import io.ebean.DB;
-import io.ebean.Transaction;
+import io.ebean.Database;
 
 import io.hexlet.blog.domain.Article;
 import io.hexlet.blog.domain.query.QArticle;
@@ -28,7 +27,7 @@ class AppTest {
     private static Javalin app;
     private static String baseUrl;
     private static Article existingArticle;
-    private static Transaction transaction;
+    private static Database database;
 
     @BeforeAll
     public static void beforeAll() {
@@ -36,9 +35,7 @@ class AppTest {
         app.start(0);
         int port = app.port();
         baseUrl = "http://localhost:" + port;
-
-        existingArticle = new Article("example name", "example description");
-        existingArticle.save();
+        database = DB.getDefault();
     }
 
     @AfterAll
@@ -46,17 +43,12 @@ class AppTest {
         app.stop();
     }
 
-    // В данном случае тесты не влияют друг на друга,
-    // но при использовании БД запускать каждый тест в транзакции -
-    // это хорошая практика
+    // Тесты не зависят друг от друга
+    // Но хорошей практикой будет возвращать базу данных между тестами в исходное состояние
     @BeforeEach
     void beforeEach() {
-        transaction = DB.beginTransaction();
-    }
-
-    @AfterEach
-    void afterEach() {
-        transaction.rollback();
+        database.script().run("/truncate.sql");
+        database.script().run("/seed-test-db.sql");
     }
 
     @Nested
@@ -88,19 +80,20 @@ class AppTest {
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
-            assertThat(body).contains(existingArticle.getName());
+            assertThat(body).contains("The Man Within");
+            assertThat(body).contains("Consider the Lilies");
         }
 
         @Test
         void testShow() {
             HttpResponse<String> response = Unirest
-                .get(baseUrl + "/articles/" + existingArticle.getId())
+                .get(baseUrl + "/articles/1")
                 .asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
-            assertThat(body).contains(existingArticle.getName());
-            assertThat(body).contains(existingArticle.getDescription());
+            assertThat(body).contains("The Man Within");
+            assertThat(body).contains("Every flight begins with a fall");
         }
 
         @Test
@@ -151,7 +144,7 @@ class AppTest {
                 .get(baseUrl + "/articles" + queryString)
                 .asString();
             String body = response.getBody();
-
+            System.out.println(body);
             assertThat(response.getStatus()).isEqualTo(200);
             assertThat(body).contains("The Man Within");
             assertThat(body).doesNotContain("Consider the Lilies");
