@@ -1,35 +1,35 @@
 setup:
-	gradle wrapper --gradle-version 7.4
+	make -C app setup
 
 clean:
-	./gradlew clean
+	make -C app clean
 
 build:
-	./gradlew clean build
+	make -C app build
 
 start:
-	APP_ENV=development ./gradlew run
+	make -C app start
 
 install:
-	./gradlew install
+	make -C app install
 
 start-dist:
-	APP_ENV=production ./build/install/java-javalin-blog/bin/java-javalin-blog
+	make -C app start-dist
 
 generate-migrations:
-	./gradlew generateMigrations
+	make -C app generate-migrations
 
 lint:
-	./gradlew checkstyleMain checkstyleTest
+	make -C app lint
 
 test:
-	./gradlew test
+	make -C app test
 
 report:
-	./gradlew jacocoTestReport
+	make -C app report
 
 check-updates:
-	./gradlew dependencyUpdates
+	make -C app check-updates
 
 image-build:
 	docker build -t hexletcomponents/java-javalin-blog:latest .
