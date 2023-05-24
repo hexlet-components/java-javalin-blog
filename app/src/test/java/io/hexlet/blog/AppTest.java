@@ -110,7 +110,7 @@ class AppTest {
         void testCreate() {
             String inputName = "new name";
             String inputDescription = "new description";
-            HttpResponse<String> responsePost = Unirest
+            HttpResponse responsePost = Unirest
                 .post(baseUrl + "/articles")
                 .field("name", inputName)
                 .field("description", inputDescription)
