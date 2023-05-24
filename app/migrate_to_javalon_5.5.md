@@ -5,9 +5,11 @@
 - Обновите версию Javalin на актуальную
 
 ```groovy
-implementation 'io.javalin:javalin:5.5.0'
-
-testImplementation 'io.ebean:ebean-test:13.15.0'
+dependencies {
+  implementation 'io.javalin:javalin:5.5.0'
+  implementation 'io.javalin:javalin-rendering:5.5.0'
+  implementation 'org.slf4j:slf4j-simple:2.0.5'
+}
 ```
 
 - Обновите остальные зависимости до актуальных версий
