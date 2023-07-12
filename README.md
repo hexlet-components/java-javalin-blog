@@ -9,8 +9,8 @@
 
 ## Requirements
 
-* JDK 17
-* Gradle 7
+* JDK 20
+* Gradle 8.2
 * GNU Make
 
 ## Setup
