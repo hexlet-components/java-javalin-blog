@@ -1,14 +1,14 @@
 package io.hexlet.blog.controllers;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import io.ebean.PagedList;
+import io.hexlet.blog.domain.Article;
+import io.hexlet.blog.domain.query.QArticle;
 import io.javalin.http.Handler;
 import io.javalin.http.NotFoundResponse;
-import io.ebean.PagedList;
-import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Collectors;
-
-import io.hexlet.blog.domain.query.QArticle;
-import io.hexlet.blog.domain.Article;
 
 public final class ArticleController {
 
@@ -80,7 +80,7 @@ public final class ArticleController {
             throw new NotFoundResponse();
         }
 
-        ctx.attribute("article", article);
-        ctx.render("articles/show.html");
+            ctx.attribute("article", article);
+            ctx.render("articles/show.html");
     };
 }
