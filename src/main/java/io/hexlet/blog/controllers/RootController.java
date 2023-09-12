@@ -1,14 +1,14 @@
 package io.hexlet.blog.controllers;
 
-import io.javalin.http.Handler;
+import io.javalin.http.Context;
 
 public final class RootController {
 
-    public static Handler welcome = ctx -> {
+    public static void welcome(Context ctx) {
         ctx.render("index.html");
     };
 
-    public static Handler about = ctx -> {
+    public static void about(Context ctx) {
         ctx.render("about.html");
     };
 }

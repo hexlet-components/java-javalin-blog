@@ -5,6 +5,7 @@ plugins {
   id 'com.github.ben-manes.versions' version '0.42.0'
   id 'io.ebean' version '13.17.4'
   id 'jacoco'
+  id 'io.freefair.lombok' version '8.2.2'
 }
 
 group = 'io.hexlet'
@@ -36,13 +37,6 @@ dependencies {
   implementation 'com.h2database:h2:2.1.214'
   implementation 'org.postgresql:postgresql:42.5.4'
 
-  implementation 'io.ebean:ebean:13.15.0'
-  implementation 'io.ebean:ebean-ddl-generator:13.15.0'
-  implementation 'io.ebean:ebean-querybean:12.15.1'
-  implementation 'io.ebean:ebean-migration:13.7.0'
-  implementation 'io.ebean:ebean-annotation:8.3'
-  annotationProcessor 'io.ebean:querybean-generator:13.15.0'
-
   // NOTE: ebean-ddl-generator требует старые зависимости, которых нет в java 9 и выше
   implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.5'
   implementation 'javax.activation:activation:1.1.1'
@@ -50,8 +44,8 @@ dependencies {
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
   testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.2'
   testImplementation 'org.assertj:assertj-core:3.24.0'
-  testImplementation 'io.ebean:ebean-test:13.15.0'
   testImplementation 'com.konghq:unirest-java:3.14.2'
+  implementation 'com.zaxxer:HikariCP:5.0.1'
 }
 
 test {

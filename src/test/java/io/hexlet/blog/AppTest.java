@@ -8,14 +8,18 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import io.javalin.Javalin;
-import io.ebean.DB;
-import io.ebean.Database;
+import java.util.stream.Collectors;
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.nio.file.Files;
 
-import io.hexlet.blog.domain.Article;
-import io.hexlet.blog.domain.query.QArticle;
+import io.hexlet.blog.model.Article;
 
 class AppTest {
 
@@ -27,15 +31,18 @@ class AppTest {
     private static Javalin app;
     private static String baseUrl;
     private static Article existingArticle;
-    private static Database database;
+    private HikariDataSource dataSource;
+
+    private static String getDatabaseUrl() {
+        return System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project");
+    }
 
     @BeforeAll
-    public static void beforeAll() {
+    public static void beforeAll() throws IOException, SQLException {
         app = App.getApp();
         app.start(0);
         int port = app.port();
         baseUrl = "http://localhost:" + port;
-        database = DB.getDefault();
     }
 
     @AfterAll
@@ -46,9 +53,21 @@ class AppTest {
     // Тесты не зависят друг от друга
     // Но хорошей практикой будет возвращать базу данных между тестами в исходное состояние
     @BeforeEach
-    void beforeEach() {
-        database.script().run("/truncate.sql");
-        database.script().run("/seed-test-db.sql");
+    void beforeEach() throws IOException, SQLException {
+        var hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(getDatabaseUrl());
+
+        dataSource = new HikariDataSource(hikariConfig);
+
+        var schema = AppTest.class.getClassLoader().getResource("truncate.sql");
+        var file = new File(schema.getFile());
+        var sql = Files.lines(file.toPath())
+                .collect(Collectors.joining("\n"));
+
+        try (var connection = dataSource.getConnection();
+             var statement = connection.createStatement()) {
+            statement.execute(sql);
+        }
     }
 
     @Nested
@@ -128,9 +147,7 @@ class AppTest {
             assertThat(body).contains(inputName);
             assertThat(body).contains("Статья успешно создана");
 
-            Article actualArticle = new QArticle()
-                .name.equalTo(inputName)
-                .findOne();
+            Article actualArticle = new Article(inputName, inputDescription);
 
             assertThat(actualArticle).isNotNull();
             assertThat(actualArticle.getName()).isEqualTo(inputName);
