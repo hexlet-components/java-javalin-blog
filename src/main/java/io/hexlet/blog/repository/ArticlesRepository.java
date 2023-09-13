@@ -79,9 +79,8 @@ public class ArticlesRepository extends BaseRepository {
 
     public static List<Article> getEntities(int page, int rowsPerPage, String term) throws SQLException {
         var offset = page * rowsPerPage;
-        var sql = String.format(
-            "SELECT * FROM articles WHERE LOWER(name) LIKE LOWER('%%%s%%') ORDER BY id LIMIT %d OFFSET %d;",
-            term, rowsPerPage, offset);
+        var sql = "SELECT * FROM articles WHERE LOWER(name) LIKE LOWER('%"
+            + term + "%') ORDER BY id LIMIT " + rowsPerPage + " OFFSET " + offset + ";";
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql)) {
             var resultSet = stmt.executeQuery();
@@ -103,7 +102,7 @@ public class ArticlesRepository extends BaseRepository {
     }
 
     public static int getEntitiesCount(String term) throws SQLException {
-        var sql = String.format("SELECT COUNT(*) AS count WHERE LOWER(name) LIKE LOWER('%%%s%%')";
+        var sql = "SELECT COUNT(*) AS count FROM articles WHERE LOWER(name) LIKE LOWER('%" + term + "%');";
         var result = 0;
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql)) {
