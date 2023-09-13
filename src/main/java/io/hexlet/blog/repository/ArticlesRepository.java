@@ -12,12 +12,14 @@ import java.util.Optional;
 
 public class ArticlesRepository extends BaseRepository {
     public static void save(Article article) throws SQLException {
-        var sql = "INSERT INTO articles (name, created_at) VALUES (?, ?)";
+        var sql = "INSERT INTO articles (name, description, created_at, updated_at) VALUES (?, ?, ?, ?)";
         var datetime = new Timestamp(System.currentTimeMillis());
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, article.getName());
-            preparedStatement.setTimestamp(2, datetime);
+            preparedStatement.setString(2, article.getDescription());
+            preparedStatement.setTimestamp(3, datetime);
+            preparedStatement.setTimestamp(4, datetime);
             preparedStatement.executeUpdate();
             var generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -40,30 +42,11 @@ public class ArticlesRepository extends BaseRepository {
                 var name = resultSet.getString("name");
                 var description = resultSet.getString("description");
                 var createdAt = resultSet.getTimestamp("created_at");
+                var updatedAt = resultSet.getTimestamp("updated_at");
                 var article = new Article(name, description);
                 article.setId(id);
                 article.setCreatedAt(createdAt);
-
-                return Optional.of(article);
-            }
-            return Optional.empty();
-        }
-    }
-
-    public static Optional<Article> findByName(String articleName) throws SQLException {
-        var sql = "SELECT * FROM articles WHERE name = ?";
-        try (var conn = dataSource.getConnection();
-             var stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, articleName);
-            var resultSet = stmt.executeQuery();
-            if (resultSet.next()) {
-                var name = resultSet.getString("name");
-                var description = resultSet.getString("description");
-                var createdAt = resultSet.getTimestamp("created_at");
-                var id = resultSet.getLong("id");
-                var article = new Article(name, description);
-                article.setId(id);
-                article.setCreatedAt(createdAt);
+                article.setUpdatedAt(updatedAt);
 
                 return Optional.of(article);
             }
@@ -81,10 +64,12 @@ public class ArticlesRepository extends BaseRepository {
                 var name = resultSet.getString("name");
                 var description = resultSet.getString("description");
                 var createdAt = resultSet.getTimestamp("created_at");
+                var updatedAt = resultSet.getTimestamp("updated_at");
                 var articleId = resultSet.getLong("id");
                 var article = new Article(name, description);
                 article.setId(id);
                 article.setCreatedAt(createdAt);
+                article.setUpdatedAt(updatedAt);
 
                 return Optional.of(article);
             }
@@ -92,9 +77,10 @@ public class ArticlesRepository extends BaseRepository {
         }
     }
 
-    public static List<Article> getEntities(int page, int rowsPerPage) throws SQLException {
+    public static List<Article> getEntities(int page, int rowsPerPage, String term) throws SQLException {
         var offset = page * rowsPerPage;
-        var sql = String.format("SELECT * FROM articles ORDER BY id OFFSET %o LIMIT %o", offset, rowsPerPage);
+        var sql = "SELECT * FROM articles WHERE LOWER(name) LIKE LOWER('%"
+            + term + "%') ORDER BY id LIMIT " + rowsPerPage + " OFFSET " + offset + ";";
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql)) {
             var resultSet = stmt.executeQuery();
@@ -104,10 +90,25 @@ public class ArticlesRepository extends BaseRepository {
                 var name = resultSet.getString("name");
                 var description = resultSet.getString("description");
                 var createdAt = resultSet.getTimestamp("created_at");
+                var updatedAt = resultSet.getTimestamp("updated_at");
                 var article = new Article(name, description);
                 article.setId(id);
                 article.setCreatedAt(createdAt);
+                article.setUpdatedAt(updatedAt);
                 result.add(article);
+            }
+            return result;
+        }
+    }
+
+    public static int getEntitiesCount(String term) throws SQLException {
+        var sql = "SELECT COUNT(*) AS count FROM articles WHERE name LIKE '%" + term + "%';";
+        var result = 0;
+        try (var conn = dataSource.getConnection();
+             var stmt = conn.prepareStatement(sql)) {
+            var resultSet = stmt.executeQuery();
+            if (resultSet.next()) {
+                result = resultSet.getInt("count");
             }
             return result;
         }

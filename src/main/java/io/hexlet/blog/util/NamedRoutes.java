@@ -20,4 +20,8 @@ public class NamedRoutes {
     public static String aboutPath() {
         return "/about";
     }
+
+    public static String articleBuildPath() {
+        return "/articles/new";
+    }
 }

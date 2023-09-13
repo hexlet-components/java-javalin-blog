@@ -4,57 +4,50 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.sql.SQLException;
-
+import java.util.Collections;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.http.Context;
+
 import io.hexlet.blog.model.Article;
-
+import io.hexlet.blog.dto.articles.ArticlesPage;
+import io.hexlet.blog.dto.articles.ArticlePage;
 import io.hexlet.blog.repository.ArticlesRepository;
+import io.hexlet.blog.util.NamedRoutes;
 
-public final class ArticleController {
+public final class ArticlesController {
 
     public static void listArticles(Context ctx) throws SQLException {
         String term = ctx.queryParamAsClass("term", String.class).getOrDefault("");
-        int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1) - 1;
+        int currentPage = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1);
         int rowsPerPage = 10;
 
+        List<Article> articles = ArticlesRepository.getEntities(currentPage - 1, rowsPerPage, term);
+        int count = ArticlesRepository.getEntitiesCount(term);
 
-
-        // PagedList<Article> pagedArticles = new QArticle()
-        //     .name.icontains(term)
-        //     .setFirstRow(page * rowsPerPage)
-        //     .setMaxRows(rowsPerPage)
-        //     .orderBy()
-        //         .id.asc()
-        //     .findPagedList();
-
-        List<Article> articles = ArticlesRepository.getEntities(page, rowsPerPage, term);
-
-        int lastPage = 1; //pagedArticles.getTotalPageCount() + 1;
-        int currentPage = 1; //pagedArticles.getPageIndex() + 1;
+        var lastPage = (int) Math.ceil((float) count / rowsPerPage);
         List<Integer> pages = IntStream
-            .range(1, lastPage)
+            .range(1, lastPage + 1)
             .boxed()
             .collect(Collectors.toList());
 
-        ctx.attribute("articles", articles);
-        ctx.attribute("term", term);
-        ctx.attribute("pages", pages);
-        ctx.attribute("currentPage", currentPage);
-        ctx.render("articles/index.html");
+        var page = new ArticlesPage(articles, term, currentPage, pages);
+
+        page.setFlash(ctx.consumeSessionAttribute("flash"));
+        page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
+
+        ctx.render("articles/index.jte", Collections.singletonMap("page", page));
     };
 
-    public static void newArticle(Context ctx) throws SQLException {
+    public static void buildArticle(Context ctx) throws SQLException {
         var name = ctx.formParamAsClass("name", String.class)
-            .check(value -> value.length() >= 2, "Название не должно быть короче двух символов")
-            .get();
+            .getOrDefault("");
         var description = ctx.formParamAsClass("description", String.class)
-            .get();
+            .getOrDefault("");
 
         Article article = new Article(name, description);
 
-        ctx.attribute("article", article);
-        ctx.render("articles/new.html");
+        var page = new ArticlePage(article);
+        ctx.render("articles/build.jte", Collections.singletonMap("page", page));
     };
 
     public static void createArticle(Context ctx) throws SQLException {
@@ -67,7 +60,7 @@ public final class ArticleController {
             ctx.sessionAttribute("flash", "Не удалось создать статью");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.attribute("article", article);
-            ctx.render("articles/new.html");
+            ctx.render("articles/new.jte");
             return;
         }
 
@@ -75,7 +68,7 @@ public final class ArticleController {
 
         ctx.sessionAttribute("flash", "Статья успешно создана");
         ctx.sessionAttribute("flash-type", "success");
-        ctx.redirect("/articles");
+        ctx.redirect(NamedRoutes.articlesPath());
     };
 
     public static void showArticle(Context ctx) throws SQLException {
@@ -84,7 +77,8 @@ public final class ArticleController {
         var article = ArticlesRepository.findById(id)
             .orElseThrow(() -> new NotFoundResponse("Article with id = " + id + " not found"));
 
-        ctx.attribute("article", article);
-        ctx.render("articles/show.html");
+        var page = new ArticlePage(article);
+
+        ctx.render("articles/show.jte", Collections.singletonMap("page", page));
     };
 }

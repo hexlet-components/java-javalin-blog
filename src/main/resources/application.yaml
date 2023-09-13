@@ -8,11 +8,3 @@ datasource:
     username: ${JDBC_DATABASE_USERNAME}
     password: ${JDBC_DATABASE_PASSWORD}
     url: ${JDBC_DATABASE_URL}
-
-ebean:
-  ddl:
-    run: true
-    generate: true
-    seedSql: seed.sql
-  # migration:
-  #   run: true

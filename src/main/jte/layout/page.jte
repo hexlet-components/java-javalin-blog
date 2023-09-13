@@ -1,5 +1,13 @@
+@import gg.jte.Content
+@import io.hexlet.blog.util.NamedRoutes
+@import io.hexlet.blog.dto.BasePage
+@import io.hexlet.blog.util.NamedRoutes
+@param Content content
+@param Content header
+@param BasePage page = null
+
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html>
 
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -17,28 +25,30 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <div class="navbar-nav">
-            <a class="nav-link" href="/">Главная</a>
-            <a class="nav-link" href="/about">О блоге</a>
-            <a class="nav-link" href="/articles">Статьи</a>
+            <a class="nav-link" href="${NamedRoutes.rootPath()}">Главная</a>
+            <a class="nav-link" href="${NamedRoutes.aboutPath()}">О блоге</a>
+            <a class="nav-link" href="${NamedRoutes.articlesPath()}">Статьи</a>
           </div>
         </div>
       </div>
     </nav>
 
     <main class="flex-grow-1">
-      <div
-        th:if="${session.flash}"
-        th:class="'rounded-0 m-0 alert alert-dismissible fade show alert-' + ${ctx.consumeSessionAttribute('flash-type')}"
-        role="alert"
-      >
-        <p class="m-0" th:text="${ctx.consumeSessionAttribute('flash')}"></p>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
+      @if(page != null && page.getFlash() != null)
+        <div class="alert alert-${page.getFlashType()}" role="alert">
+          ${page.getFlash()}
+        </div>
+      @endif
+
       <div class="container mt-4">
         <h1 class="my-4">
-          <section layout:fragment="header"></section>
+          <section>
+            ${header}
+          </section>
         </h1>
-        <section layout:fragment="content"></section>
+        <section>
+          ${content}
+        </section>
       </div>
     </main>
 
