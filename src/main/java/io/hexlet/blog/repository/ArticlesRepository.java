@@ -1,12 +1,12 @@
 package io.hexlet.blog.repository;
 
 import io.hexlet.blog.model.Article;
+import io.hexlet.blog.dto.articles.ArticlesData;
 
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -77,14 +77,18 @@ public class ArticlesRepository extends BaseRepository {
         }
     }
 
-    public static List<Article> getEntities(int page, int rowsPerPage, String term) throws SQLException {
+    public static ArticlesData findEntities(int page, int rowsPerPage, String term) throws SQLException {
         var offset = page * rowsPerPage;
-        var sql = "SELECT * FROM articles WHERE LOWER(name) LIKE LOWER('%"
-            + term + "%') ORDER BY id LIMIT " + rowsPerPage + " OFFSET " + offset + ";";
+        var findTerm = "%" + term + "%";
+        var sql = String.format("""
+            SELECT *, COUNT(*) OVER () AS TotalCount FROM articles
+            WHERE LOWER(name) LIKE LOWER('%s') ORDER BY id LIMIT %d OFFSET %d;
+            """, findTerm, rowsPerPage, offset);
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql)) {
             var resultSet = stmt.executeQuery();
-            var result = new ArrayList<Article>();
+            var articles = new ArrayList<Article>();
+            var totalCount = 0;
             while (resultSet.next()) {
                 var id = resultSet.getLong("id");
                 var name = resultSet.getString("name");
@@ -95,21 +99,10 @@ public class ArticlesRepository extends BaseRepository {
                 article.setId(id);
                 article.setCreatedAt(createdAt);
                 article.setUpdatedAt(updatedAt);
-                result.add(article);
+                articles.add(article);
+                totalCount = resultSet.getInt("TotalCount");
             }
-            return result;
-        }
-    }
-
-    public static int getEntitiesCount(String term) throws SQLException {
-        var sql = "SELECT COUNT(*) AS count FROM articles WHERE LOWER(name) LIKE LOWER('%" + term + "%');";
-        var result = 0;
-        try (var conn = dataSource.getConnection();
-             var stmt = conn.prepareStatement(sql)) {
-            var resultSet = stmt.executeQuery();
-            if (resultSet.next()) {
-                result = resultSet.getInt("count");
-            }
+            var result = new ArticlesData(articles, totalCount);
             return result;
         }
     }

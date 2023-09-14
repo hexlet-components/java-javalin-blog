@@ -13,6 +13,7 @@ import io.hexlet.blog.dto.articles.ArticlesPage;
 import io.hexlet.blog.dto.articles.ArticlePage;
 import io.hexlet.blog.repository.ArticlesRepository;
 import io.hexlet.blog.util.NamedRoutes;
+import io.hexlet.blog.dto.articles.ArticlesData;
 
 public final class ArticlesController {
 
@@ -21,8 +22,10 @@ public final class ArticlesController {
         int currentPage = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1);
         int rowsPerPage = 10;
 
-        List<Article> articles = ArticlesRepository.getEntities(currentPage - 1, rowsPerPage, term);
-        int count = ArticlesRepository.getEntitiesCount(term);
+        ArticlesData articlesData = ArticlesRepository.findEntities(currentPage - 1, rowsPerPage, term);
+
+        List<Article> articles = articlesData.getArticles();
+        int count = articlesData.getTotalCount();
 
         var lastPage = (int) Math.ceil((float) count / rowsPerPage);
         List<Integer> pages = IntStream
