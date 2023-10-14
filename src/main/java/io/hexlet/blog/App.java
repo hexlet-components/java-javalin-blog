@@ -10,7 +10,7 @@ import io.hexlet.blog.controllers.RootController;
 import io.hexlet.blog.controllers.ArticlesController;
 import io.hexlet.blog.repository.BaseRepository;
 import io.hexlet.blog.util.NamedRoutes;
-import io.hexlet.blog.util.Helper;
+import io.hexlet.blog.util.FileUtils;
 
 public final class App {
 
@@ -48,17 +48,12 @@ public final class App {
 
         var dataSource = new HikariDataSource(hikariConfig);
 
-        var schemaSql = Helper.getSql("schema.sql");
+        String schemaSql = FileUtils.readResourceFile("schema.sql");
+        String seedSql = FileUtils.readResourceFile("seed.sql");
 
         try (var connection = dataSource.getConnection();
              var statement = connection.createStatement()) {
             statement.execute(schemaSql);
-        }
-
-        var seedSql = Helper.getSql("seed.sql");
-
-        try (var connection = dataSource.getConnection();
-             var statement = connection.createStatement()) {
             statement.execute(seedSql);
         }
 
