@@ -61,8 +61,8 @@ public final class App {
 
         var dataSource = new HikariDataSource(hikariConfig);
 
-        String schemaSql = readResourceFile("schema.sql");
-        String seedSql = readResourceFile("seed.sql");
+        var schemaSql = readResourceFile("schema.sql");
+        var seedSql = readResourceFile("seed.sql");
 
         try (var connection = dataSource.getConnection();
              var statement = connection.createStatement()) {
