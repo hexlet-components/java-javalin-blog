@@ -1,7 +1,13 @@
 package io.hexlet.blog;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.stream.Collectors;
+
 import io.javalin.Javalin;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -10,7 +16,6 @@ import io.hexlet.blog.controllers.RootController;
 import io.hexlet.blog.controllers.ArticlesController;
 import io.hexlet.blog.repository.BaseRepository;
 import io.hexlet.blog.util.NamedRoutes;
-import io.hexlet.blog.util.FileUtils;
 
 public final class App {
 
@@ -31,6 +36,14 @@ public final class App {
         return getMode().equals("production");
     }
 
+    public static String readResourceFile(String name) throws IOException {
+        ClassLoader classLoader = App.class.getClassLoader();
+        InputStream is = classLoader.getResourceAsStream(name);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+            return reader.lines().collect(Collectors.joining("\n"));
+        }
+    }
+
     private static void addRoutes(Javalin app) {
         app.get(NamedRoutes.rootPath(), RootController::welcome);
         app.get(NamedRoutes.aboutPath(), RootController::about);
@@ -48,8 +61,8 @@ public final class App {
 
         var dataSource = new HikariDataSource(hikariConfig);
 
-        String schemaSql = FileUtils.readResourceFile("schema.sql");
-        String seedSql = FileUtils.readResourceFile("seed.sql");
+        String schemaSql = readResourceFile("schema.sql");
+        String seedSql = readResourceFile("seed.sql");
 
         try (var connection = dataSource.getConnection();
              var statement = connection.createStatement()) {
@@ -78,4 +91,5 @@ public final class App {
         Javalin app = getApp();
         app.start(getPort());
     }
+
 }
