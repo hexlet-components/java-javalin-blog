@@ -36,7 +36,7 @@ public final class App {
         return getMode().equals("production");
     }
 
-    public static String readResourceFile(String name) throws IOException {
+    private static String readResourceFile(String name) throws IOException {
         ClassLoader classLoader = App.class.getClassLoader();
         InputStream is = classLoader.getResourceAsStream(name);
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
