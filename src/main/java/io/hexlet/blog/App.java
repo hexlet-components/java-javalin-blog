@@ -1,12 +1,9 @@
 package io.hexlet.blog;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.stream.Collectors;
 
 import io.javalin.Javalin;
 import com.zaxxer.hikari.HikariConfig;
@@ -36,12 +33,9 @@ public final class App {
         return getMode().equals("production");
     }
 
-    private static String readResourceFile(String name) throws IOException {
-        var classLoader = App.class.getClassLoader();
-        var is = classLoader.getResourceAsStream(name);
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-            return reader.lines().collect(Collectors.joining("\n"));
-        }
+    private static String readResourceFile(String fileName) throws IOException {
+        var path = Paths.get("src", "main", "resources", fileName);
+        return Files.readString(path);
     }
 
     private static void addRoutes(Javalin app) {
