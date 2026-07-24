@@ -56,7 +56,7 @@ test {
 }
 
 testlogger {
-  showStandardStreams true
+  showStandardStreams = true
 }
 
 jacocoTestReport {
@@ -66,7 +66,7 @@ jacocoTestReport {
 }
 
 checkstyle {
-  toolVersion '13.8.0'
+  toolVersion = '13.8.0'
 }
 
 task generateMigrations(type: JavaExec) {
