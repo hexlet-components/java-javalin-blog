@@ -1,6 +1,7 @@
 package io.hexlet.blog;
 
 import io.javalin.Javalin;
+import io.javalin.config.RoutesConfig;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.get;
@@ -43,38 +44,36 @@ public final class App {
         return templateEngine;
     }
 
-    private static void addRoutes(Javalin app) {
-        app.get("/", RootController.welcome);
-        app.get("/about", RootController.about);
-
-        app.routes(() -> {
-            path("articles", () -> {
-                get(ArticleController.listArticles);
-                post(ArticleController.createArticle);
-                get("new", ArticleController.newArticle);
-                path("{id}", () -> {
-                    get(ArticleController.showArticle);
-                });
-            });
-        });
+    private static void addRoutes(RoutesConfig routes) {
+        routes.get("/", RootController.welcome);
+        routes.get("/about", RootController.about);
     }
 
     public static Javalin getApp() {
-        Javalin app = Javalin.create(config -> {
+        return Javalin.create(config -> {
             if (!isProduction()) {
-                config.plugins.enableDevLogging();
+                config.bundledPlugins.enableDevLogging();
             }
 
-            JavalinThymeleaf.init(getTemplateEngine());
+            config.fileRenderer(new JavalinThymeleaf(getTemplateEngine()));
+
+            addRoutes(config.routes);
+
+            config.routes.apiBuilder(() -> {
+                path("articles", () -> {
+                    get(ArticleController.listArticles);
+                    post(ArticleController.createArticle);
+                    get("new", ArticleController.newArticle);
+                    path("{id}", () -> {
+                        get(ArticleController.showArticle);
+                    });
+                });
+            });
+
+            config.routes.before(ctx -> {
+                ctx.attribute("ctx", ctx);
+            });
         });
-
-        addRoutes(app);
-
-        app.before(ctx -> {
-            ctx.attribute("ctx", ctx);
-        });
-
-        return app;
     }
 
     public static void main(String[] args) {

@@ -1,9 +1,9 @@
 plugins {
   id 'application'
   id 'checkstyle'
-  id 'com.adarshr.test-logger' version '3.2.0'
-  id 'com.github.ben-manes.versions' version '0.42.0'
-  id 'io.ebean' version '13.17.4'
+  id 'com.adarshr.test-logger' version '4.0.0'
+  id 'com.github.ben-manes.versions' version '0.54.0'
+  id 'io.ebean' version '19.3.0'
   id 'jacoco'
 }
 
@@ -24,34 +24,31 @@ application {
 }
 
 dependencies {
-  implementation 'io.javalin:javalin:5.5.0'
-  implementation 'io.javalin:javalin-rendering:5.5.0'
-  implementation 'org.slf4j:slf4j-simple:2.0.5'
+  implementation 'io.javalin:javalin:7.2.2'
+  implementation 'io.javalin:javalin-rendering-thymeleaf:7.2.2'
+  implementation 'org.slf4j:slf4j-simple:2.0.18'
 
-  implementation 'org.thymeleaf:thymeleaf:3.1.1.RELEASE'
-  implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.2.0'
+  implementation 'org.thymeleaf:thymeleaf:3.1.5.RELEASE'
+  implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.4.0'
   implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
-  implementation 'org.webjars:bootstrap:5.2.3'
+  implementation 'org.webjars:bootstrap:5.3.8'
 
-  implementation 'com.h2database:h2:2.1.214'
-  implementation 'org.postgresql:postgresql:42.5.4'
+  implementation 'com.h2database:h2:2.4.240'
+  implementation 'org.postgresql:postgresql:42.7.13'
 
-  implementation 'io.ebean:ebean:13.15.0'
-  implementation 'io.ebean:ebean-ddl-generator:13.15.0'
-  implementation 'io.ebean:ebean-querybean:12.15.1'
-  implementation 'io.ebean:ebean-migration:13.7.0'
-  implementation 'io.ebean:ebean-annotation:8.3'
-  annotationProcessor 'io.ebean:querybean-generator:13.15.0'
+  implementation 'io.ebean:ebean:19.3.0'
+  implementation 'io.ebean:ebean-ddl-generator:19.3.0'
+  implementation 'io.ebean:ebean-querybean:19.3.0'
+  implementation 'io.ebean:ebean-migration:14.3.0'
+  implementation 'io.ebean:ebean-annotation:8.11'
+  annotationProcessor 'io.ebean:querybean-generator:19.3.0'
 
-  // NOTE: ebean-ddl-generator требует старые зависимости, которых нет в java 9 и выше
-  implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.5'
-  implementation 'javax.activation:activation:1.1.1'
-
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
-  testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.2'
-  testImplementation 'org.assertj:assertj-core:3.24.0'
-  testImplementation 'io.ebean:ebean-test:13.15.0'
-  testImplementation 'com.konghq:unirest-java:3.14.2'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.14.4'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.14.4'
+  testImplementation 'org.junit.jupiter:junit-jupiter-params:5.14.4'
+  testImplementation 'org.assertj:assertj-core:3.27.7'
+  testImplementation 'io.ebean:ebean-test:19.3.0'
+  testImplementation 'com.konghq:unirest-java:3.14.5'
 }
 
 test {
@@ -69,7 +66,7 @@ jacocoTestReport {
 }
 
 checkstyle {
-  toolVersion '10.12.1'
+  toolVersion '13.8.0'
 }
 
 task generateMigrations(type: JavaExec) {

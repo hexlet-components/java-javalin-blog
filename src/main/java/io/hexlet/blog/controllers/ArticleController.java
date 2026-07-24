@@ -70,7 +70,7 @@ public final class ArticleController {
     };
 
     public static Handler showArticle = ctx -> {
-        int id = ctx.pathParamAsClass("id", Integer.class).getOrDefault(null);
+        int id = ctx.pathParamAsClass("id", Integer.class).get();
 
         Article article = new QArticle()
             .id.equalTo(id)
@@ -80,7 +80,7 @@ public final class ArticleController {
             throw new NotFoundResponse();
         }
 
-            ctx.attribute("article", article);
-            ctx.render("articles/show.html");
+        ctx.attribute("article", article);
+        ctx.render("articles/show.html");
     };
 }
