@@ -1,19 +1,18 @@
 package io.hexlet.blog;
 
+import static io.javalin.apibuilder.ApiBuilder.get;
+import static io.javalin.apibuilder.ApiBuilder.path;
+import static io.javalin.apibuilder.ApiBuilder.post;
+
+import io.hexlet.blog.controllers.ArticleController;
+import io.hexlet.blog.controllers.RootController;
 import io.javalin.Javalin;
 import io.javalin.config.RoutesConfig;
 import io.javalin.rendering.template.JavalinThymeleaf;
-import static io.javalin.apibuilder.ApiBuilder.path;
-import static io.javalin.apibuilder.ApiBuilder.get;
-import static io.javalin.apibuilder.ApiBuilder.post;
-
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
+import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
-
-import io.hexlet.blog.controllers.RootController;
-import io.hexlet.blog.controllers.ArticleController;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 public final class App {
 

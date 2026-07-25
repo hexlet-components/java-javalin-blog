@@ -1,7 +1,7 @@
 plugins {
   id 'application'
-  id 'checkstyle'
   id 'com.adarshr.test-logger' version '4.0.0'
+  id 'com.diffplug.spotless' version '8.8.0'
   id 'com.github.ben-manes.versions' version '0.54.0'
   id 'io.ebean' version '19.3.0'
   id 'jacoco'
@@ -65,8 +65,15 @@ jacocoTestReport {
   }
 }
 
-checkstyle {
-  toolVersion = '13.8.0'
+spotless {
+  java {
+    target 'src/**/*.java'
+    importOrder()
+    removeUnusedImports()
+    trimTrailingWhitespace()
+    endWithNewline()
+    leadingTabsToSpaces(4)
+  }
 }
 
 task generateMigrations(type: JavaExec) {

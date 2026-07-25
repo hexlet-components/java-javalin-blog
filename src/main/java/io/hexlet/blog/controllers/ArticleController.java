@@ -1,14 +1,13 @@
 package io.hexlet.blog.controllers;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import io.ebean.PagedList;
 import io.hexlet.blog.domain.Article;
 import io.hexlet.blog.domain.query.QArticle;
 import io.javalin.http.Handler;
 import io.javalin.http.NotFoundResponse;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public final class ArticleController {
 

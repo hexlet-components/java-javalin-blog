@@ -20,7 +20,10 @@ generate-migrations:
 	./gradlew generateMigrations
 
 lint:
-	./gradlew checkstyleMain checkstyleTest
+	./gradlew spotlessCheck
+
+format:
+	./gradlew spotlessApply
 
 test:
 	./gradlew test
