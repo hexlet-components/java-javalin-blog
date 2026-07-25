@@ -1,4 +1,4 @@
-FROM eclipse-temurin:20-jdk
+FROM eclipse-temurin:21-jdk
 
 ARG GRADLE_VERSION=9.6.1
 
@@ -20,4 +20,4 @@ COPY . .
 
 RUN gradle installDist
 
-CMD ./build/install/java-javalin-blog/bin/java-javalin-blog
+CMD ["./build/install/java-javalin-blog/bin/java-javalin-blog"]
