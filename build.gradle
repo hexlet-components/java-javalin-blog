@@ -15,7 +15,7 @@ repositories {
 }
 
 compileJava {
-  options.release = 19
+  options.release = 25
   options.encoding = 'UTF-8'
 }
 

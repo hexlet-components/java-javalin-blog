@@ -9,7 +9,7 @@
 
 ## Requirements
 
-* JDK 20
+* JDK 25
 * Gradle 9.6.1
 * GNU Make
 

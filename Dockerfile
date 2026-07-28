@@ -1,8 +1,8 @@
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:25-jdk
 
 ARG GRADLE_VERSION=9.6.1
 
-RUN apt-get update && apt-get install -yq unzip
+RUN apt-get update && apt-get install -yq unzip wget
 
 RUN wget -q https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip \
     && unzip gradle-${GRADLE_VERSION}-bin.zip \
