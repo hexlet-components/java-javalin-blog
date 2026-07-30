@@ -1,5 +1,5 @@
 setup:
-	gradle wrapper --gradle-version 8.2
+	gradle wrapper --gradle-version 9.6.1
 
 clean:
 	./gradlew clean
@@ -20,7 +20,10 @@ generate-migrations:
 	./gradlew generateMigrations
 
 lint:
-	./gradlew checkstyleMain checkstyleTest
+	./gradlew spotlessCheck
+
+format:
+	./gradlew spotlessApply
 
 test:
 	./gradlew test

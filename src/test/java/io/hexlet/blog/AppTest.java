@@ -1,21 +1,19 @@
 package io.hexlet.blog;
 
-import org.junit.jupiter.api.BeforeAll;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import io.ebean.DB;
+import io.ebean.Database;
+import io.hexlet.blog.domain.Article;
+import io.hexlet.blog.domain.query.QArticle;
+import io.javalin.Javalin;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
-import io.javalin.Javalin;
-import io.ebean.DB;
-import io.ebean.Database;
-
-import io.hexlet.blog.domain.Article;
-import io.hexlet.blog.domain.query.QArticle;
 
 class AppTest {
 

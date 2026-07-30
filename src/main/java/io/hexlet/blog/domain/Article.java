@@ -1,12 +1,12 @@
 package io.hexlet.blog.domain;
 
 import io.ebean.Model;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import java.time.Instant;
 import io.ebean.annotation.WhenCreated;
 import io.ebean.annotation.WhenModified;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import java.time.Instant;
 
 @Entity
 public final class Article extends Model {
