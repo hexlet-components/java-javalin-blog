@@ -1,9 +1,9 @@
 plugins {
   id 'application'
   id 'com.adarshr.test-logger' version '4.0.0'
-  id 'com.diffplug.spotless' version '8.8.0'
-  id 'com.github.ben-manes.versions' version '0.54.0'
-  id 'io.ebean' version '19.3.0'
+  id 'com.diffplug.spotless' version '8.9.0'
+  id 'com.github.ben-manes.versions' version '0.56.0'
+  id 'io.ebean' version '19.4.0'
   id 'jacoco'
 }
 
@@ -29,25 +29,25 @@ dependencies {
   implementation 'org.slf4j:slf4j-simple:2.0.18'
 
   implementation 'org.thymeleaf:thymeleaf:3.1.5.RELEASE'
-  implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.4.0'
+  implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:4.0.1'
   implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
   implementation 'org.webjars:bootstrap:5.3.8'
 
   implementation 'com.h2database:h2:2.4.240'
   implementation 'org.postgresql:postgresql:42.7.13'
 
-  implementation 'io.ebean:ebean:19.3.0'
-  implementation 'io.ebean:ebean-ddl-generator:19.3.0'
-  implementation 'io.ebean:ebean-querybean:19.3.0'
-  implementation 'io.ebean:ebean-migration:14.3.0'
+  implementation 'io.ebean:ebean:19.4.0'
+  implementation 'io.ebean:ebean-ddl-generator:19.4.0'
+  implementation 'io.ebean:ebean-querybean:19.4.0'
+  implementation 'io.ebean:ebean-migration:14.4.0'
   implementation 'io.ebean:ebean-annotation:8.11'
-  annotationProcessor 'io.ebean:querybean-generator:19.3.0'
+  annotationProcessor 'io.ebean:querybean-generator:19.4.0'
 
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.14.4'
-  testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.14.4'
-  testImplementation 'org.junit.jupiter:junit-jupiter-params:5.14.4'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:6.1.2'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.1.2'
+  testImplementation 'org.junit.jupiter:junit-jupiter-params:6.1.2'
   testImplementation 'org.assertj:assertj-core:3.27.7'
-  testImplementation 'io.ebean:ebean-test:19.3.0'
+  testImplementation 'io.ebean:ebean-test:19.4.0'
   testImplementation 'com.konghq:unirest-java:3.14.5'
 }
 
