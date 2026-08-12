@@ -72,9 +72,7 @@ class AppTest {
 
         @Test
         void testIndex() {
-            HttpResponse<String> response = Unirest
-                .get(baseUrl + "/articles")
-                .asString();
+            HttpResponse<String> response = Unirest.get(baseUrl + "/articles").asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
@@ -84,9 +82,7 @@ class AppTest {
 
         @Test
         void testShow() {
-            HttpResponse<String> response = Unirest
-                .get(baseUrl + "/articles/1")
-                .asString();
+            HttpResponse<String> response = Unirest.get(baseUrl + "/articles/1").asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
@@ -96,9 +92,7 @@ class AppTest {
 
         @Test
         void testNew() {
-            HttpResponse<String> response = Unirest
-                .get(baseUrl + "/articles/new")
-                .asString();
+            HttpResponse<String> response = Unirest.get(baseUrl + "/articles/new").asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
@@ -108,27 +102,23 @@ class AppTest {
         void testCreate() {
             String inputName = "new name";
             String inputDescription = "new description";
-            HttpResponse responsePost = Unirest
-                .post(baseUrl + "/articles")
-                .field("name", inputName)
-                .field("description", inputDescription)
-                .asEmpty();
+            HttpResponse responsePost =
+                    Unirest.post(baseUrl + "/articles")
+                            .field("name", inputName)
+                            .field("description", inputDescription)
+                            .asEmpty();
 
             assertThat(responsePost.getStatus()).isEqualTo(302);
             assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/articles");
 
-            HttpResponse<String> response = Unirest
-                .get(baseUrl + "/articles")
-                .asString();
+            HttpResponse<String> response = Unirest.get(baseUrl + "/articles").asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
             assertThat(body).contains(inputName);
             assertThat(body).contains("Статья успешно создана");
 
-            Article actualArticle = new QArticle()
-                .name.equalTo(inputName)
-                .findOne();
+            Article actualArticle = new QArticle().name.equalTo(inputName).findOne();
 
             assertThat(actualArticle).isNotNull();
             assertThat(actualArticle.getName()).isEqualTo(inputName);
@@ -138,9 +128,8 @@ class AppTest {
         @Test
         void testSearch() {
             var queryString = "?term=man";
-            HttpResponse<String> response = Unirest
-                .get(baseUrl + "/articles" + queryString)
-                .asString();
+            HttpResponse<String> response =
+                    Unirest.get(baseUrl + "/articles" + queryString).asString();
             String body = response.getBody();
             System.out.println(body);
             assertThat(response.getStatus()).isEqualTo(200);

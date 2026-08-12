@@ -49,30 +49,37 @@ public final class App {
     }
 
     public static Javalin getApp() {
-        return Javalin.create(config -> {
-            if (!isProduction()) {
-                config.bundledPlugins.enableDevLogging();
-            }
+        return Javalin.create(
+                config -> {
+                    if (!isProduction()) {
+                        config.bundledPlugins.enableDevLogging();
+                    }
 
-            config.fileRenderer(new JavalinThymeleaf(getTemplateEngine()));
+                    config.fileRenderer(new JavalinThymeleaf(getTemplateEngine()));
 
-            addRoutes(config.routes);
+                    addRoutes(config.routes);
 
-            config.routes.apiBuilder(() -> {
-                path("articles", () -> {
-                    get(ArticleController.listArticles);
-                    post(ArticleController.createArticle);
-                    get("new", ArticleController.newArticle);
-                    path("{id}", () -> {
-                        get(ArticleController.showArticle);
-                    });
+                    config.routes.apiBuilder(
+                            () -> {
+                                path(
+                                        "articles",
+                                        () -> {
+                                            get(ArticleController.listArticles);
+                                            post(ArticleController.createArticle);
+                                            get("new", ArticleController.newArticle);
+                                            path(
+                                                    "{id}",
+                                                    () -> {
+                                                        get(ArticleController.showArticle);
+                                                    });
+                                        });
+                            });
+
+                    config.routes.before(
+                            ctx -> {
+                                ctx.attribute("ctx", ctx);
+                            });
                 });
-            });
-
-            config.routes.before(ctx -> {
-                ctx.attribute("ctx", ctx);
-            });
-        });
     }
 
     public static void main(String[] args) {
