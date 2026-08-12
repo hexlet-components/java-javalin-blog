@@ -2,7 +2,7 @@ plugins {
   id 'application'
   id 'com.adarshr.test-logger' version '4.0.0'
   id 'com.diffplug.spotless' version '8.9.0'
-  id 'com.github.ben-manes.versions' version '0.61.0'
+  id 'io.github.ben-manes.versions' version '0.61.0'
   id 'io.ebean' version '19.4.0'
   id 'jacoco'
 }
@@ -70,6 +70,8 @@ spotless {
     target 'src/**/*.java'
     importOrder()
     removeUnusedImports()
+    googleJavaFormat().aosp()
+    formatAnnotations()
     trimTrailingWhitespace()
     endWithNewline()
     leadingTabsToSpaces(4)
