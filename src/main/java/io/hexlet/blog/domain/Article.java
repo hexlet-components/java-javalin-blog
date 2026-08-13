@@ -11,22 +11,17 @@ import java.time.Instant;
 @Entity
 public final class Article extends Model {
 
-    @Id
-    private long id;
+    @Id private long id;
 
     private String name;
 
-    @Lob
-    private String description;
+    @Lob private String description;
 
-    @WhenCreated
-    private Instant createdAt;
+    @WhenCreated private Instant createdAt;
 
-    @WhenModified
-    private Instant updatedAt;
+    @WhenModified private Instant updatedAt;
 
-    public Article() {
-    }
+    public Article() {}
 
     public Article(String name, String description) {
         this.name = name;
