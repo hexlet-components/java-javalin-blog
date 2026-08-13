@@ -1,0 +1,56 @@
+[plugins]
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless-plugin" }
+versions = { id = "io.github.ben-manes.versions", version.ref = "versions-plugin" }
+version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "catalog-update-plugin" }
+test-logger = { id = "com.adarshr.test-logger", version.ref = "test-logger-plugin" }
+ebean = { id = "io.ebean", version.ref = "ebean" }
+
+[versions]
+spotless-plugin = "8.9.0"
+versions-plugin = "0.61.0"
+catalog-update-plugin = "1.1.1"
+test-logger-plugin = "4.0.0"
+ebean = "19.4.0"
+ebean-migration = "14.4.0"
+ebean-annotation = "8.11"
+javalin = "7.2.3"
+slf4j = "2.0.18"
+thymeleaf = "3.1.5.RELEASE"
+thymeleaf-layout-dialect = "4.0.1"
+thymeleaf-extras-java8time = "3.0.4.RELEASE"
+bootstrap = "5.3.8"
+h2 = "2.4.240"
+postgresql = "42.7.13"
+junit-bom = "6.1.3"
+assertj = "3.27.7"
+# Придержано намеренно: 4.x переехал в пакет kong.unirest.core, это правка кода.
+unirest = "3.14.5"
+
+[libraries]
+# Web
+javalin = { module = "io.javalin:javalin", version.ref = "javalin" }
+javalinRenderingThymeleaf = { module = "io.javalin:javalin-rendering-thymeleaf", version.ref = "javalin" }
+# View
+thymeleaf = { module = "org.thymeleaf:thymeleaf", version.ref = "thymeleaf" }
+thymeleafLayoutDialect = { module = "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect", version.ref = "thymeleaf-layout-dialect" }
+thymeleafExtrasJava8time = { module = "org.thymeleaf.extras:thymeleaf-extras-java8time", version.ref = "thymeleaf-extras-java8time" }
+bootstrap = { module = "org.webjars:bootstrap", version.ref = "bootstrap" }
+# Logging
+slf4jSimple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+# Database
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+ebean = { module = "io.ebean:ebean", version.ref = "ebean" }
+ebeanDdlGenerator = { module = "io.ebean:ebean-ddl-generator", version.ref = "ebean" }
+ebeanQuerybean = { module = "io.ebean:ebean-querybean", version.ref = "ebean" }
+ebeanMigration = { module = "io.ebean:ebean-migration", version.ref = "ebean-migration" }
+ebeanAnnotation = { module = "io.ebean:ebean-annotation", version.ref = "ebean-annotation" }
+querybeanGenerator = { module = "io.ebean:querybean-generator", version.ref = "ebean" }
+ebeanTest = { module = "io.ebean:ebean-test", version.ref = "ebean" }
+# Tests
+junitBom = { module = "org.junit:junit-bom", version.ref = "junit-bom" }
+junitJupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junitJupiterParams = { module = "org.junit.jupiter:junit-jupiter-params" }
+junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
+assertjCore = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+unirestJava = { module = "com.konghq:unirest-java", version.ref = "unirest" }
