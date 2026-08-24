@@ -7,45 +7,50 @@
   </section>
 
   <section layout:fragment="content">
-    <a class="btn btn-primary mb-5" href="/articles/new">Создать статью</a>
+    <a class="mb-6 inline-block rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" href="/articles/new">Создать статью</a>
     <form action="/articles" method="get">
-      <div class="input-group">
-        <input type="search" class="form-control rounded" name="term" th:value="${term}" placeholder="Search by article name" />
-        <button type="submit" class="btn btn-outline-primary">Search</button>
+      <div class="flex flex-wrap gap-2">
+        <input type="search" class="flex-1 rounded border border-gray-300 px-3 py-2" name="term" th:value="${term}" placeholder="Search by article name" />
+        <button type="submit" class="cursor-pointer rounded border border-blue-600 px-4 py-2 text-blue-600 hover:bg-blue-50">Search</button>
       </div>
     </form>
 
-    <table class="table table-striped mt-5">
-      <thead>
-        <tr>
-          <th class="col-1">ID</th>
-          <th class="col-3">Название</th>
-          <th>Описание</th>
-          <th class="col-2">Дата создания</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:each="article : ${articles}" th:object="${article}">
-          <td th:text="*{getId()}"></td>
-          <td>
-            <a th:href="@{/articles/{id}(id=*{getId()})}" th:text="${#strings.abbreviate(article.getName(), 30)}"></a>
-          </td>
-          <td th:text="${#strings.abbreviate(article.getDescription(), 60)}"></td>
-          <td th:text="${#temporals.format(article.getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="mt-8 overflow-x-auto">
+      <table class="w-full border-collapse bg-white text-left">
+        <thead>
+          <tr class="border-b border-gray-200">
+            <th class="px-4 py-2 font-semibold">ID</th>
+            <th class="px-4 py-2 font-semibold">Название</th>
+            <th class="px-4 py-2 font-semibold">Описание</th>
+            <th class="px-4 py-2 font-semibold">Дата создания</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-gray-100 odd:bg-gray-50" th:each="article : ${articles}" th:object="${article}">
+            <td class="px-4 py-2" th:text="*{getId()}"></td>
+            <td class="px-4 py-2">
+              <a class="text-blue-600 hover:underline" th:href="@{/articles/{id}(id=*{getId()})}" th:text="${#strings.abbreviate(article.getName(), 30)}"></a>
+            </td>
+            <td class="px-4 py-2" th:text="${#strings.abbreviate(article.getDescription(), 60)}"></td>
+            <td class="px-4 py-2" th:text="${#temporals.format(article.getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <nav aria-label="Page navigation" th:if="${#lists.size(pages)}">
-      <ul class="pagination justify-content-center mt-5">
-        <li th:class="'page-item' + ${currentPage <= 1 ? ' disabled' : ''}">
-          <a class="page-link" th:href="@{/articles(page=${currentPage - 1},term=${term})}">Previous</a>
+      <ul class="mt-8 flex flex-wrap justify-center gap-1">
+        <li>
+          <a th:class="'block rounded border px-3 py-1 ' + (${currentPage <= 1} ? 'pointer-events-none border-gray-200 text-gray-400' : 'border-gray-300 text-blue-600 hover:bg-blue-50')"
+             th:href="@{/articles(page=${currentPage - 1},term=${term})}">Previous</a>
         </li>
-        <li th:each="page : ${pages}" th:class="'page-item' + ${currentPage == page ? ' active' : ''}">
-          <a class="page-link" th:href="@{/articles(page=${page},term=${term})}" th:text="${page}"></a>
+        <li th:each="page : ${pages}">
+          <a th:class="'block rounded border px-3 py-1 ' + (${currentPage == page} ? 'border-blue-600 bg-blue-600 text-white' : 'border-gray-300 text-blue-600 hover:bg-blue-50')"
+             th:href="@{/articles(page=${page},term=${term})}" th:text="${page}"></a>
         </li>
-        <li th:class="'page-item' + ${currentPage >= #lists.size(pages) ? ' disabled' : ''}">
-          <a class="page-link" th:href="@{/articles(page=${currentPage + 1},)}">Next</a>
+        <li>
+          <a th:class="'block rounded border px-3 py-1 ' + (${currentPage >= #lists.size(pages)} ? 'pointer-events-none border-gray-200 text-gray-400' : 'border-gray-300 text-blue-600 hover:bg-blue-50')"
+             th:href="@{/articles(page=${currentPage + 1},term=${term})}">Next</a>
         </li>
       </ul>
     </nav>

@@ -4,7 +4,13 @@ setup:
 clean:
 	./gradlew clean
 
-build:
+node-deps:
+	pnpm install --frozen-lockfile
+
+build-css: node-deps
+	pnpm run build:css
+
+build: build-css
 	./gradlew clean build
 
 start:

@@ -1,0 +1,6 @@
+# С 10-й версии pnpm не выполняет postinstall зависимостей без разрешения, и
+# `pnpm install` падает с «Ignored build scripts». Сборка @parcel/watcher нужна
+# только режиму --watch у tailwind, которым мы не пользуемся, поэтому она
+# отключена явно, а не разрешена целиком.
+allowBuilds:
+  '@parcel/watcher': false

@@ -8,6 +8,7 @@ import io.hexlet.blog.controllers.ArticleController;
 import io.hexlet.blog.controllers.RootController;
 import io.javalin.Javalin;
 import io.javalin.config.RoutesConfig;
+import io.javalin.http.staticfiles.Location;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.thymeleaf.TemplateEngine;
@@ -56,6 +57,10 @@ public final class App {
                     }
 
                     config.fileRenderer(new JavalinThymeleaf(getTemplateEngine()));
+
+                    // Собранный css лежит в ресурсах: его пишет tailwind из
+                    // assets/css/source.css.
+                    config.staticFiles.add("/static", Location.CLASSPATH);
 
                     addRoutes(config.routes);
 
