@@ -7,13 +7,14 @@
   </section>
 
   <section layout:fragment="content" th:object="${article}">
-    <div class="card">
-      <div class="card-header bg-secondary text-white">
-        <h2 th:text="*{getName()}"></h2>
+    <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+      <div class="border-b border-gray-200 bg-gray-800 px-6 py-4 text-white">
+        <h2 class="text-xl font-semibold" th:text="*{getName()}"></h2>
       </div>
-      <div class="card-body bg-light">
-        <p class="lead" th:text="*{getDescription()}"></p>
+      <div class="px-6 py-4">
+        <p class="text-lg" th:text="*{getDescription()}"></p>
       </div>
+    </div>
   </section>
 
 </html>
