@@ -1,7 +1,7 @@
 {
   "name": "java-javalin-blog",
   "private": true,
-  "packageManager": "pnpm@11.20.0",
+  "packageManager": "pnpm@11.24.0",
   "scripts": {
     "build:css": "tailwindcss --input assets/css/source.css --output src/main/resources/static/css/main.css --minify"
   },
