@@ -1,25 +1,18 @@
 package io.hexlet.blog.domain;
 
-import io.ebean.Model;
-import io.ebean.annotation.WhenCreated;
-import io.ebean.annotation.WhenModified;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
-@Entity
-public final class Article extends Model {
+public final class Article {
 
-    @Id private long id;
+    private long id;
 
     private String name;
 
-    @Lob private String description;
+    private String description;
 
-    @WhenCreated private Instant createdAt;
+    private LocalDateTime createdAt;
 
-    @WhenModified private Instant updatedAt;
+    private LocalDateTime updatedAt;
 
     public Article() {}
 
@@ -32,6 +25,10 @@ public final class Article extends Model {
         return this.id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return this.name;
     }
@@ -40,11 +37,19 @@ public final class Article extends Model {
         return this.description;
     }
 
-    public Instant getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return this.createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
         return this.updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

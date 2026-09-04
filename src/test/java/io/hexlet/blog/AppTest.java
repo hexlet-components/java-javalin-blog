@@ -2,11 +2,16 @@ package io.hexlet.blog;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.ebean.DB;
-import io.ebean.Database;
 import io.hexlet.blog.domain.Article;
-import io.hexlet.blog.domain.query.QArticle;
+import io.hexlet.blog.repository.ArticleRepository;
+import io.hexlet.blog.repository.BaseRepository;
 import io.javalin.Javalin;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.util.stream.Collectors;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import org.junit.jupiter.api.AfterAll;
@@ -24,16 +29,13 @@ class AppTest {
 
     private static Javalin app;
     private static String baseUrl;
-    private static Article existingArticle;
-    private static Database database;
 
     @BeforeAll
-    public static void beforeAll() {
+    public static void beforeAll() throws IOException, SQLException {
         app = App.getApp();
         app.start(0);
         int port = app.port();
         baseUrl = "http://localhost:" + port;
-        database = DB.getDefault();
     }
 
     @AfterAll
@@ -44,9 +46,22 @@ class AppTest {
     // Тесты не зависят друг от друга
     // Но хорошей практикой будет возвращать базу данных между тестами в исходное состояние
     @BeforeEach
-    void beforeEach() {
-        database.script().run("/truncate.sql");
-        database.script().run("/seed-test-db.sql");
+    void beforeEach() throws IOException, SQLException {
+        runScript("truncate.sql");
+        runScript("seed-test-db.sql");
+    }
+
+    private static void runScript(String fileName) throws IOException, SQLException {
+        var inputStream = AppTest.class.getClassLoader().getResourceAsStream(fileName);
+        String sql;
+        try (var reader =
+                new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            sql = reader.lines().collect(Collectors.joining("\n"));
+        }
+        try (var connection = BaseRepository.dataSource.getConnection();
+                var statement = connection.createStatement()) {
+            statement.execute(sql);
+        }
     }
 
     @Nested
@@ -99,7 +114,7 @@ class AppTest {
         }
 
         @Test
-        void testCreate() {
+        void testCreate() throws SQLException {
             String inputName = "new name";
             String inputDescription = "new description";
             HttpResponse responsePost =
@@ -118,7 +133,7 @@ class AppTest {
             assertThat(body).contains(inputName);
             assertThat(body).contains("Статья успешно создана");
 
-            Article actualArticle = new QArticle().name.equalTo(inputName).findOne();
+            Article actualArticle = ArticleRepository.findByName(inputName).orElse(null);
 
             assertThat(actualArticle).isNotNull();
             assertThat(actualArticle.getName()).isEqualTo(inputName);
@@ -131,7 +146,7 @@ class AppTest {
             HttpResponse<String> response =
                     Unirest.get(baseUrl + "/articles" + queryString).asString();
             String body = response.getBody();
-            System.out.println(body);
+
             assertThat(response.getStatus()).isEqualTo(200);
             assertThat(body).contains("The Man Within");
             assertThat(body).doesNotContain("Consider the Lilies");

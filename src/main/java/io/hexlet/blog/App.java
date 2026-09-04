@@ -4,12 +4,21 @@ import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.post;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import io.hexlet.blog.controllers.ArticleController;
 import io.hexlet.blog.controllers.RootController;
+import io.hexlet.blog.repository.BaseRepository;
 import io.javalin.Javalin;
 import io.javalin.config.RoutesConfig;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.rendering.template.JavalinThymeleaf;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.util.stream.Collectors;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
@@ -28,6 +37,18 @@ public final class App {
 
     private static boolean isProduction() {
         return getMode().equals("production");
+    }
+
+    private static String getDatabaseUrl() {
+        return System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:blog");
+    }
+
+    private static String readResourceFile(String fileName) throws IOException {
+        var inputStream = App.class.getClassLoader().getResourceAsStream(fileName);
+        try (var reader =
+                new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            return reader.lines().collect(Collectors.joining("\n"));
+        }
     }
 
     private static TemplateEngine getTemplateEngine() {
@@ -49,7 +70,21 @@ public final class App {
         routes.get("/about", RootController.about);
     }
 
-    public static Javalin getApp() {
+    public static Javalin getApp() throws IOException, SQLException {
+        var hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(getDatabaseUrl());
+
+        var dataSource = new HikariDataSource(hikariConfig);
+
+        // Схему и демонстрационные статьи кладёт сам код при старте: у примера нет
+        // отдельного шага миграций, а пустой список статей выглядит как поломка.
+        try (var connection = dataSource.getConnection();
+                var statement = connection.createStatement()) {
+            statement.execute(readResourceFile("schema.sql"));
+            statement.execute(readResourceFile("seed.sql"));
+        }
+        BaseRepository.dataSource = dataSource;
+
         return Javalin.create(
                 config -> {
                     if (!isProduction()) {
@@ -87,7 +122,7 @@ public final class App {
                 });
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, SQLException {
         Javalin app = getApp();
         app.start(getPort());
     }
