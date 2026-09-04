@@ -13,8 +13,10 @@ build-css: node-deps
 build: build-css
 	./gradlew clean build
 
-start:
-	APP_ENV=development ./gradlew run
+start: node-deps
+	pnpm exec concurrently --kill-others --names css,app \
+		"pnpm run watch:css" \
+		"APP_ENV=development ./gradlew run"
 
 install:
 	./gradlew install
