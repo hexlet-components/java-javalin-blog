@@ -32,6 +32,17 @@ jobs:
       - name: Build with Gradle
         run: make build
 
+      - name: Coverage report
+        run: make report
+
+      - uses: coverallsapp/github-action@v2
+        with:
+          file: build/reports/jacoco/test/jacocoTestReport.xml
+          format: jacoco
+          # В отчёте jacoco путь к файлу начинается с имени пакета, поэтому
+          # корнем для поиска исходников служит src/main/java.
+          base-path: src/main/java
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
