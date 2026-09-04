@@ -4,7 +4,9 @@ FROM node:26-slim AS css
 
 WORKDIR /app
 
-RUN corepack enable
+# Node 26 не несёт corepack: из дистрибутива его убрали. Ставим пакетом,
+# чтобы версия pnpm по-прежнему бралась из packageManager в package.json.
+RUN npm install -g corepack && corepack enable
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
