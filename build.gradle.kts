@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.versions)
     alias(libs.plugins.version.catalog.update)
     alias(libs.plugins.test.logger)
-    alias(libs.plugins.ebean)
 }
 
 group = "io.hexlet"
@@ -39,20 +38,13 @@ dependencies {
 
     implementation(libs.h2)
     implementation(libs.postgresql)
-
-    implementation(libs.ebean)
-    implementation(libs.ebeanDdlGenerator)
-    implementation(libs.ebeanQuerybean)
-    implementation(libs.ebeanMigration)
-    implementation(libs.ebeanAnnotation)
-    annotationProcessor(libs.querybeanGenerator)
+    implementation(libs.hikariCp)
 
     testImplementation(platform(libs.junitBom))
     testRuntimeOnly(libs.junitJupiter)
     testRuntimeOnly(libs.junitPlatformLauncher)
     testImplementation(libs.junitJupiterParams)
     testImplementation(libs.assertjCore)
-    testImplementation(libs.ebeanTest)
     testImplementation(libs.unirestJava)
 }
 
@@ -81,11 +73,6 @@ spotless {
         endWithNewline()
         leadingTabsToSpaces(4)
     }
-}
-
-tasks.register<JavaExec>("generateMigrations") {
-    classpath = sourceSets.main.get().runtimeClasspath
-    mainClass = "io.hexlet.blog.MigrationGenerator"
 }
 
 tasks.register("stage") {
