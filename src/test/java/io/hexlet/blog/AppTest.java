@@ -151,5 +151,47 @@ class AppTest {
             assertThat(body).contains("The Man Within");
             assertThat(body).doesNotContain("Consider the Lilies");
         }
+
+        // Страницу отдаёт LIMIT с OFFSET, а число страниц считает отдельный COUNT.
+        // Ошибка в любом из двух запросов снаружи выглядит одинаково — «статьи
+        // пропали», — поэтому проверяются обе страницы сразу.
+        @Test
+        void testPagination() throws SQLException {
+            for (int i = 1; i <= 11; i++) {
+                ArticleRepository.save(new Article("Article " + i, "description " + i));
+            }
+
+            HttpResponse<String> firstPage = Unirest.get(baseUrl + "/articles").asString();
+            assertThat(firstPage.getStatus()).isEqualTo(200);
+            assertThat(firstPage.getBody()).contains("The Man Within");
+            assertThat(firstPage.getBody()).doesNotContain("Article 10");
+
+            HttpResponse<String> secondPage = Unirest.get(baseUrl + "/articles?page=2").asString();
+            assertThat(secondPage.getStatus()).isEqualTo(200);
+            assertThat(secondPage.getBody()).contains("Article 10");
+            assertThat(secondPage.getBody()).doesNotContain("The Man Within");
+        }
+
+        @Test
+        void testShowNotFound() {
+            HttpResponse<String> response = Unirest.get(baseUrl + "/articles/999").asString();
+
+            assertThat(response.getStatus()).isEqualTo(404);
+        }
+
+        // Пустое поле до базы доезжать не должно: контроллер возвращает форму,
+        // и статья не создаётся.
+        @Test
+        void testCreateWithEmptyName() throws SQLException {
+            HttpResponse<String> response =
+                    Unirest.post(baseUrl + "/articles")
+                            .field("name", "")
+                            .field("description", "new description")
+                            .asString();
+
+            assertThat(response.getStatus()).isEqualTo(200);
+            assertThat(response.getBody()).contains("Не удалось создать статью");
+            assertThat(ArticleRepository.findByName("")).isEmpty();
+        }
     }
 }
