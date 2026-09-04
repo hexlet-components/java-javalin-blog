@@ -10,11 +10,11 @@
     <form class="max-w-xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm" action="/articles" method="post">
       <div class="mb-4">
         <label for="name" class="mb-1 block text-sm font-medium">Наименование</label>
-        <input type="text" class="w-full rounded border border-gray-300 px-3 py-2" id="name" name="name" th:value="${article.getName()}">
+        <input type="text" class="w-full rounded" id="name" name="name" th:value="${article.getName()}">
       </div>
       <div class="mb-4">
         <label for="description" class="mb-1 block text-sm font-medium">Описание</label>
-        <textarea rows="10" class="w-full rounded border border-gray-300 px-3 py-2" id="description" name="description" th:text="${article.getDescription()}"></textarea>
+        <textarea rows="10" class="w-full rounded" id="description" name="description" th:text="${article.getDescription()}"></textarea>
       </div>
       <button type="submit" class="cursor-pointer rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Создать</button>
     </form>
