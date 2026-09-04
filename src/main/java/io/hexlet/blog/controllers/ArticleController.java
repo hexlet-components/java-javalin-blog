@@ -15,7 +15,10 @@ public final class ArticleController {
     public static Handler listArticles =
             ctx -> {
                 String term = ctx.queryParamAsClass("term", String.class).getOrDefault("");
-                int currentPage = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1);
+                // Номер страницы приходит из адреса, поэтому ноль и минус приходят тоже.
+                // Без нижней границы OFFSET уходит в минус, и база отвечает ошибкой.
+                int requestedPage = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1);
+                int currentPage = Math.max(1, requestedPage);
                 int offset = (currentPage - 1) * ROWS_PER_PAGE;
 
                 List<Article> articles = ArticleRepository.search(term, offset, ROWS_PER_PAGE);

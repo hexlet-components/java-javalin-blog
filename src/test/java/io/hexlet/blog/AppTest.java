@@ -172,6 +172,19 @@ class AppTest {
             assertThat(secondPage.getBody()).doesNotContain("The Man Within");
         }
 
+        // Номер страницы приходит из адреса, и ноль с минусом приходят тоже.
+        // Без нижней границы OFFSET уходил в минус и база отвечала ошибкой.
+        @Test
+        void testPaginationBelowFirstPage() {
+            for (String page : new String[] {"0", "-1"}) {
+                HttpResponse<String> response =
+                        Unirest.get(baseUrl + "/articles?page=" + page).asString();
+
+                assertThat(response.getStatus()).isEqualTo(200);
+                assertThat(response.getBody()).contains("The Man Within");
+            }
+        }
+
         @Test
         void testShowNotFound() {
             HttpResponse<String> response = Unirest.get(baseUrl + "/articles/999").asString();
