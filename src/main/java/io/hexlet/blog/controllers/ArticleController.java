@@ -12,13 +12,35 @@ public final class ArticleController {
 
     private static final int ROWS_PER_PAGE = 10;
 
+    // Номер страницы и id приходят из адреса строками, и разбор у них свой.
+    // Встроенная проверка Javalin на непрошедшем значении бросает
+    // ValidationException, а её штатный обработчик сериализует ошибки в json и
+    // без jackson-databind падает сам: вместо 400 приходит 500.
+    private static int parsePage(String raw) {
+        if (raw == null) {
+            return 1;
+        }
+        try {
+            return Integer.parseInt(raw);
+        } catch (NumberFormatException e) {
+            return 1;
+        }
+    }
+
+    private static long parseId(String raw) {
+        try {
+            return Long.parseLong(raw);
+        } catch (NumberFormatException e) {
+            throw new NotFoundResponse();
+        }
+    }
+
     public static Handler listArticles =
             ctx -> {
                 String term = ctx.queryParamAsClass("term", String.class).getOrDefault("");
-                // Номер страницы приходит из адреса, поэтому ноль и минус приходят тоже.
-                // Без нижней границы OFFSET уходит в минус, и база отвечает ошибкой.
-                int requestedPage = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1);
-                int currentPage = Math.max(1, requestedPage);
+                // Ноль и минус приходят оттуда же. Без нижней границы OFFSET
+                // уходит в минус, и база отвечает ошибкой.
+                int currentPage = Math.max(1, parsePage(ctx.queryParam("page")));
                 int offset = (currentPage - 1) * ROWS_PER_PAGE;
 
                 List<Article> articles = ArticleRepository.search(term, offset, ROWS_PER_PAGE);
@@ -67,7 +89,7 @@ public final class ArticleController {
 
     public static Handler showArticle =
             ctx -> {
-                long id = ctx.pathParamAsClass("id", Long.class).get();
+                long id = parseId(ctx.pathParam("id"));
 
                 Article article =
                         ArticleRepository.find(id).orElseThrow(() -> new NotFoundResponse());

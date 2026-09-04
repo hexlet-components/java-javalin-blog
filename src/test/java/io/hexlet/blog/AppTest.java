@@ -185,6 +185,24 @@ class AppTest {
             }
         }
 
+        // Нечисловой параметр Javalin проверяет сам, но её обработчик сериализует
+        // ошибки в json и без jackson-databind падает, превращая 400 в 500.
+        // Поэтому номер страницы и id разбираются своим кодом.
+        @Test
+        void testPaginationInvalidPage() {
+            HttpResponse<String> response = Unirest.get(baseUrl + "/articles?page=abc").asString();
+
+            assertThat(response.getStatus()).isEqualTo(200);
+            assertThat(response.getBody()).contains("The Man Within");
+        }
+
+        @Test
+        void testShowInvalidId() {
+            HttpResponse<String> response = Unirest.get(baseUrl + "/articles/abc").asString();
+
+            assertThat(response.getStatus()).isEqualTo(404);
+        }
+
         @Test
         void testShowNotFound() {
             HttpResponse<String> response = Unirest.get(baseUrl + "/articles/999").asString();
