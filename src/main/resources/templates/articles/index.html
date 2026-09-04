@@ -10,7 +10,7 @@
     <a class="mb-6 inline-block rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" href="/articles/new">Создать статью</a>
     <form action="/articles" method="get">
       <div class="flex flex-wrap gap-2">
-        <input type="search" class="flex-1 rounded border border-gray-300 px-3 py-2" name="term" th:value="${term}" placeholder="Search by article name" />
+        <input type="search" class="flex-1 rounded" name="term" th:value="${term}" placeholder="Search by article name" />
         <button type="submit" class="cursor-pointer rounded border border-blue-600 px-4 py-2 text-blue-600 hover:bg-blue-50">Search</button>
       </div>
     </form>

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/forms";
 
 /* Классы Tailwind живут в шаблонах thymeleaf, а точка входа css лежит вне их
    каталога. Без явного источника сборка проходит зелёной, main.css оказывается
