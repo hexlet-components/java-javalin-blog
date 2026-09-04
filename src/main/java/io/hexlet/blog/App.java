@@ -17,12 +17,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
+import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.FileTemplateResolver;
 
 public final class App {
 
@@ -31,8 +37,21 @@ public final class App {
         return Integer.valueOf(port);
     }
 
+    private static final Logger LOG = LoggerFactory.getLogger(App.class);
+
+    private static final Path TEMPLATES_PATH = Path.of("src", "main", "resources", "templates");
+    private static final Path STATIC_PATH = Path.of("src", "main", "resources", "static");
+
     private static String getMode() {
-        return System.getenv().getOrDefault("APP_ENV", "development");
+        return System.getenv().getOrDefault("APP_ENV", "production");
+    }
+
+    // Режим разработки включает переменная APP_ENV, её ставит цель start.
+    // Вторая половина условия смотрит, лежат ли исходники рядом с процессом:
+    // запущенное из другого каталога приложение возьмёт шаблоны с classpath
+    // вместо непонятного отказа.
+    private static boolean isDevelopment() {
+        return getMode().equals("development") && Files.isDirectory(TEMPLATES_PATH);
     }
 
     private static boolean isProduction() {
@@ -54,15 +73,27 @@ public final class App {
     private static TemplateEngine getTemplateEngine() {
         TemplateEngine templateEngine = new TemplateEngine();
 
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setPrefix("/templates/");
-        templateResolver.setCharacterEncoding("UTF-8");
-
-        templateEngine.addTemplateResolver(templateResolver);
+        templateEngine.addTemplateResolver(createTemplateResolver());
         templateEngine.addDialect(new LayoutDialect());
         templateEngine.addDialect(new Java8TimeDialect());
 
         return templateEngine;
+    }
+
+    // В разработке шаблоны читаются из каталога исходников и не кешируются,
+    // поэтому правка разметки видна без перезапуска приложения.
+    private static AbstractConfigurableTemplateResolver createTemplateResolver() {
+        if (isDevelopment()) {
+            var fileResolver = new FileTemplateResolver();
+            fileResolver.setPrefix(TEMPLATES_PATH + "/");
+            fileResolver.setCharacterEncoding("UTF-8");
+            fileResolver.setCacheable(false);
+            return fileResolver;
+        }
+        var classLoaderResolver = new ClassLoaderTemplateResolver();
+        classLoaderResolver.setPrefix("/templates/");
+        classLoaderResolver.setCharacterEncoding("UTF-8");
+        return classLoaderResolver;
     }
 
     private static void addRoutes(RoutesConfig routes) {
@@ -85,6 +116,13 @@ public final class App {
         }
         BaseRepository.dataSource = dataSource;
 
+        // Молча выбранный режим неотличим от «правка разметки не подхватилась».
+        LOG.info(
+                "Mode: {}",
+                isDevelopment()
+                        ? "development, templates and static are read from src"
+                        : "production, templates and static are read from classpath");
+
         return Javalin.create(
                 config -> {
                     if (!isProduction()) {
@@ -93,9 +131,14 @@ public final class App {
 
                     config.fileRenderer(new JavalinThymeleaf(getTemplateEngine()));
 
-                    // Собранный css лежит в ресурсах: его пишет tailwind из
-                    // assets/css/source.css.
-                    config.staticFiles.add("/static", Location.CLASSPATH);
+                    // Собранный css лежит в ресурсах, его пишет tailwind из
+                    // assets/css/source.css. В разработке он отдаётся прямо из
+                    // исходников, чтобы вотчер попадал в работающее приложение.
+                    if (isDevelopment()) {
+                        config.staticFiles.add(STATIC_PATH.toString(), Location.EXTERNAL);
+                    } else {
+                        config.staticFiles.add("/static", Location.CLASSPATH);
+                    }
 
                     addRoutes(config.routes);
 

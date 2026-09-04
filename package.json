@@ -3,11 +3,13 @@
   "private": true,
   "packageManager": "pnpm@11.24.0",
   "scripts": {
-    "build:css": "tailwindcss --input assets/css/source.css --output src/main/resources/static/css/main.css --minify"
+    "build:css": "tailwindcss --input assets/css/source.css --output src/main/resources/static/css/main.css --minify",
+    "watch:css": "tailwindcss --input assets/css/source.css --output src/main/resources/static/css/main.css --watch"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.3.3",
     "@tailwindcss/forms": "^0.5.11",
+    "concurrently": "^9.2.1",
     "tailwindcss": "^4.3.3"
   }
 }
