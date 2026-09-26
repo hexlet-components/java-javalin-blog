@@ -17,7 +17,7 @@ RUN pnpm run build:css
 
 FROM eclipse-temurin:25-jdk
 
-ARG GRADLE_VERSION=9.6.1
+ARG GRADLE_VERSION=9.8.0
 
 RUN apt-get update && apt-get install -yq unzip wget
 

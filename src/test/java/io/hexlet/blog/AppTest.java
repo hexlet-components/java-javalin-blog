@@ -12,8 +12,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
+import kong.unirest.core.HttpResponse;
+import kong.unirest.core.Unirest;
+import kong.unirest.core.UnirestInstance;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,16 +23,21 @@ import org.junit.jupiter.api.Test;
 
 class AppTest {
 
+    // Свой клиент, чтобы настройка редиректов не меняла глобальный Unirest
+    private static final UnirestInstance http = Unirest.spawnInstance();
+
+    private static Javalin app;
+    private static String baseUrl;
+
     @Test
     void testInit() {
         assertThat(true).isEqualTo(true);
     }
 
-    private static Javalin app;
-    private static String baseUrl;
-
     @BeforeAll
     public static void beforeAll() throws IOException, SQLException {
+        // Unirest 4 по умолчанию идёт по редиректу и после POST, а тестам нужен сам ответ 302.
+        http.config().followRedirects(false);
         app = App.getApp();
         app.start(0);
         int port = app.port();
@@ -40,7 +46,15 @@ class AppTest {
 
     @AfterAll
     public static void afterAll() {
-        app.stop();
+        // Если beforeAll упал в App.getApp(), app остаётся null,
+        // а клиент нужно закрыть в любом случае
+        try {
+            if (app != null) {
+                app.stop();
+            }
+        } finally {
+            http.close();
+        }
     }
 
     // Тесты не зависят друг от друга
@@ -69,14 +83,14 @@ class AppTest {
 
         @Test
         void testIndex() {
-            HttpResponse<String> response = Unirest.get(baseUrl).asString();
+            HttpResponse<String> response = http.get(baseUrl).asString();
             assertThat(response.getStatus()).isEqualTo(200);
             assertThat(response.getBody()).contains("Привет от Хекслета!");
         }
 
         @Test
         void testAbout() {
-            HttpResponse<String> response = Unirest.get(baseUrl + "/about").asString();
+            HttpResponse<String> response = http.get(baseUrl + "/about").asString();
             assertThat(response.getStatus()).isEqualTo(200);
             assertThat(response.getBody()).contains("Эксперименты с Javalin на Хекслете");
         }
@@ -87,7 +101,7 @@ class AppTest {
 
         @Test
         void testIndex() {
-            HttpResponse<String> response = Unirest.get(baseUrl + "/articles").asString();
+            HttpResponse<String> response = http.get(baseUrl + "/articles").asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
@@ -95,9 +109,20 @@ class AppTest {
             assertThat(body).contains("Consider the Lilies");
         }
 
+        // Дату в списке форматирует #temporals. С Thymeleaf 3.1 он входит в ядро,
+        // поэтому отдельный модуль thymeleaf-extras-java8time убран, и тест
+        // страхует, что форматирование работает без него.
+        @Test
+        void testIndexCreatedAtFormat() {
+            HttpResponse<String> response = http.get(baseUrl + "/articles").asString();
+
+            assertThat(response.getStatus()).isEqualTo(200);
+            assertThat(response.getBody()).contains("01/01/2022 13:57");
+        }
+
         @Test
         void testShow() {
-            HttpResponse<String> response = Unirest.get(baseUrl + "/articles/1").asString();
+            HttpResponse<String> response = http.get(baseUrl + "/articles/1").asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
@@ -107,7 +132,7 @@ class AppTest {
 
         @Test
         void testNew() {
-            HttpResponse<String> response = Unirest.get(baseUrl + "/articles/new").asString();
+            HttpResponse<String> response = http.get(baseUrl + "/articles/new").asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
@@ -118,7 +143,7 @@ class AppTest {
             String inputName = "new name";
             String inputDescription = "new description";
             HttpResponse responsePost =
-                    Unirest.post(baseUrl + "/articles")
+                    http.post(baseUrl + "/articles")
                             .field("name", inputName)
                             .field("description", inputDescription)
                             .asEmpty();
@@ -126,7 +151,7 @@ class AppTest {
             assertThat(responsePost.getStatus()).isEqualTo(302);
             assertThat(responsePost.getHeaders().getFirst("Location")).isEqualTo("/articles");
 
-            HttpResponse<String> response = Unirest.get(baseUrl + "/articles").asString();
+            HttpResponse<String> response = http.get(baseUrl + "/articles").asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
@@ -144,7 +169,7 @@ class AppTest {
         void testSearch() {
             var queryString = "?term=man";
             HttpResponse<String> response =
-                    Unirest.get(baseUrl + "/articles" + queryString).asString();
+                    http.get(baseUrl + "/articles" + queryString).asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
@@ -161,12 +186,12 @@ class AppTest {
                 ArticleRepository.save(new Article("Article " + i, "description " + i));
             }
 
-            HttpResponse<String> firstPage = Unirest.get(baseUrl + "/articles").asString();
+            HttpResponse<String> firstPage = http.get(baseUrl + "/articles").asString();
             assertThat(firstPage.getStatus()).isEqualTo(200);
             assertThat(firstPage.getBody()).contains("The Man Within");
             assertThat(firstPage.getBody()).doesNotContain("Article 10");
 
-            HttpResponse<String> secondPage = Unirest.get(baseUrl + "/articles?page=2").asString();
+            HttpResponse<String> secondPage = http.get(baseUrl + "/articles?page=2").asString();
             assertThat(secondPage.getStatus()).isEqualTo(200);
             assertThat(secondPage.getBody()).contains("Article 10");
             assertThat(secondPage.getBody()).doesNotContain("The Man Within");
@@ -178,7 +203,7 @@ class AppTest {
         void testPaginationBelowFirstPage() {
             for (String page : new String[] {"0", "-1"}) {
                 HttpResponse<String> response =
-                        Unirest.get(baseUrl + "/articles?page=" + page).asString();
+                        http.get(baseUrl + "/articles?page=" + page).asString();
 
                 assertThat(response.getStatus()).isEqualTo(200);
                 assertThat(response.getBody()).contains("The Man Within");
@@ -190,7 +215,7 @@ class AppTest {
         // Поэтому номер страницы и id разбираются своим кодом.
         @Test
         void testPaginationInvalidPage() {
-            HttpResponse<String> response = Unirest.get(baseUrl + "/articles?page=abc").asString();
+            HttpResponse<String> response = http.get(baseUrl + "/articles?page=abc").asString();
 
             assertThat(response.getStatus()).isEqualTo(200);
             assertThat(response.getBody()).contains("The Man Within");
@@ -198,14 +223,14 @@ class AppTest {
 
         @Test
         void testShowInvalidId() {
-            HttpResponse<String> response = Unirest.get(baseUrl + "/articles/abc").asString();
+            HttpResponse<String> response = http.get(baseUrl + "/articles/abc").asString();
 
             assertThat(response.getStatus()).isEqualTo(404);
         }
 
         @Test
         void testShowNotFound() {
-            HttpResponse<String> response = Unirest.get(baseUrl + "/articles/999").asString();
+            HttpResponse<String> response = http.get(baseUrl + "/articles/999").asString();
 
             assertThat(response.getStatus()).isEqualTo(404);
         }
@@ -215,7 +240,7 @@ class AppTest {
         @Test
         void testCreateWithEmptyName() throws SQLException {
             HttpResponse<String> response =
-                    Unirest.post(baseUrl + "/articles")
+                    http.post(baseUrl + "/articles")
                             .field("name", "")
                             .field("description", "new description")
                             .asString();

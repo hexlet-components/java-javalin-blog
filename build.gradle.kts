@@ -33,7 +33,6 @@ dependencies {
 
     implementation(libs.thymeleaf)
     implementation(libs.thymeleafLayoutDialect)
-    implementation(libs.thymeleafExtrasJava8time)
     implementation(libs.bootstrap)
 
     implementation(libs.h2)
