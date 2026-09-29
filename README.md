@@ -4,7 +4,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/c26cc0a63f7cfe8bd9c1/maintainability)](https://codeclimate.com/github/hexlet-components/java-javalin-blog/maintainability)
 [![Coverage Status](https://coveralls.io/repos/github/hexlet-components/java-javalin-blog/badge.svg?branch=main)](https://coveralls.io/github/hexlet-components/java-javalin-blog?branch=main)
 
-[Demo on Heroku](https://java-javalin-blog.hexlet.app)
+Blog on Javalin built the same way as the code of the Hexlet course «Java: Веб-технологии»: jte templates with a layout, DTO pages, named routes, flash messages and a JDBC repository. On top of the course material it adds PostgreSQL in production with H2 locally, pagination, search, tests that reset the database before each case and a Tailwind build.
 
 ## Requirements
 
