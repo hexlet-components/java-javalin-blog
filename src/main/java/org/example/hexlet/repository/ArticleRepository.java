@@ -1,6 +1,5 @@
-package io.hexlet.blog.repository;
+package org.example.hexlet.repository;
 
-import io.hexlet.blog.domain.Article;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -9,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.example.hexlet.model.Article;
 
 public class ArticleRepository extends BaseRepository {
 

@@ -5,9 +5,10 @@ plugins {
     alias(libs.plugins.versions)
     alias(libs.plugins.version.catalog.update)
     alias(libs.plugins.test.logger)
+    alias(libs.plugins.lombok)
 }
 
-group = "io.hexlet"
+group = "org.example"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -23,18 +24,15 @@ tasks.compileJava {
 }
 
 application {
-    mainClass = "io.hexlet.blog.App"
+    mainClass = "org.example.hexlet.App"
 }
 
 dependencies {
     implementation(libs.javalin)
-    implementation(libs.javalinRenderingThymeleaf)
+    implementation(libs.javalinRenderingJte)
     implementation(libs.slf4jSimple)
 
-    implementation(libs.thymeleaf)
-    implementation(libs.thymeleafLayoutDialect)
-    implementation(libs.thymeleafExtrasJava8time)
-    implementation(libs.bootstrap)
+    implementation(libs.jte)
 
     implementation(libs.h2)
     implementation(libs.postgresql)

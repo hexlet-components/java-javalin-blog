@@ -1,18 +1,14 @@
-package io.hexlet.blog;
-
-import static io.javalin.apibuilder.ApiBuilder.get;
-import static io.javalin.apibuilder.ApiBuilder.path;
-import static io.javalin.apibuilder.ApiBuilder.post;
+package org.example.hexlet;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.hexlet.blog.controllers.ArticleController;
-import io.hexlet.blog.controllers.RootController;
-import io.hexlet.blog.repository.BaseRepository;
+import gg.jte.ContentType;
+import gg.jte.TemplateEngine;
+import gg.jte.resolve.DirectoryCodeResolver;
+import gg.jte.resolve.ResourceCodeResolver;
 import io.javalin.Javalin;
-import io.javalin.config.RoutesConfig;
 import io.javalin.http.staticfiles.Location;
-import io.javalin.rendering.template.JavalinThymeleaf;
+import io.javalin.rendering.template.JavalinJte;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,14 +17,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
-import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
+import org.example.hexlet.controller.ArticlesController;
+import org.example.hexlet.controller.RootController;
+import org.example.hexlet.repository.BaseRepository;
+import org.example.hexlet.util.NamedRoutes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
-import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-import org.thymeleaf.templateresolver.FileTemplateResolver;
 
 public final class App {
 
@@ -41,6 +35,7 @@ public final class App {
 
     private static final Path TEMPLATES_PATH = Path.of("src", "main", "resources", "templates");
     private static final Path STATIC_PATH = Path.of("src", "main", "resources", "static");
+    private static final Path JTE_CLASSES_PATH = Path.of("jte-classes");
 
     private static String getMode() {
         return System.getenv().getOrDefault("APP_ENV", "production");
@@ -70,35 +65,16 @@ public final class App {
         }
     }
 
-    private static TemplateEngine getTemplateEngine() {
-        TemplateEngine templateEngine = new TemplateEngine();
-
-        templateEngine.addTemplateResolver(createTemplateResolver());
-        templateEngine.addDialect(new LayoutDialect());
-        templateEngine.addDialect(new Java8TimeDialect());
-
-        return templateEngine;
-    }
-
-    // В разработке шаблоны читаются из каталога исходников и не кешируются,
-    // поэтому правка разметки видна без перезапуска приложения.
-    private static AbstractConfigurableTemplateResolver createTemplateResolver() {
+    private static TemplateEngine createTemplateEngine() {
+        // В разработке шаблоны читаются из каталога исходников и перекомпилируются
+        // на лету, поэтому правка разметки видна без перезапуска приложения.
         if (isDevelopment()) {
-            var fileResolver = new FileTemplateResolver();
-            fileResolver.setPrefix(TEMPLATES_PATH + "/");
-            fileResolver.setCharacterEncoding("UTF-8");
-            fileResolver.setCacheable(false);
-            return fileResolver;
+            var codeResolver = new DirectoryCodeResolver(TEMPLATES_PATH);
+            return TemplateEngine.create(codeResolver, JTE_CLASSES_PATH, ContentType.Html);
         }
-        var classLoaderResolver = new ClassLoaderTemplateResolver();
-        classLoaderResolver.setPrefix("/templates/");
-        classLoaderResolver.setCharacterEncoding("UTF-8");
-        return classLoaderResolver;
-    }
-
-    private static void addRoutes(RoutesConfig routes) {
-        routes.get("/", RootController.welcome);
-        routes.get("/about", RootController.about);
+        var classLoader = App.class.getClassLoader();
+        var codeResolver = new ResourceCodeResolver("templates", classLoader);
+        return TemplateEngine.create(codeResolver, ContentType.Html);
     }
 
     public static Javalin getApp() throws IOException, SQLException {
@@ -129,7 +105,7 @@ public final class App {
                         config.bundledPlugins.enableDevLogging();
                     }
 
-                    config.fileRenderer(new JavalinThymeleaf(getTemplateEngine()));
+                    config.fileRenderer(new JavalinJte(createTemplateEngine()));
 
                     // Собранный css лежит в ресурсах, его пишет tailwind из
                     // assets/css/source.css. В разработке он отдаётся прямо из
@@ -140,28 +116,13 @@ public final class App {
                         config.staticFiles.add("/static", Location.CLASSPATH);
                     }
 
-                    addRoutes(config.routes);
+                    config.routes.get(NamedRoutes.rootPath(), RootController::index);
+                    config.routes.get(NamedRoutes.aboutPath(), RootController::about);
 
-                    config.routes.apiBuilder(
-                            () -> {
-                                path(
-                                        "articles",
-                                        () -> {
-                                            get(ArticleController.listArticles);
-                                            post(ArticleController.createArticle);
-                                            get("new", ArticleController.newArticle);
-                                            path(
-                                                    "{id}",
-                                                    () -> {
-                                                        get(ArticleController.showArticle);
-                                                    });
-                                        });
-                            });
-
-                    config.routes.before(
-                            ctx -> {
-                                ctx.attribute("ctx", ctx);
-                            });
+                    config.routes.get(NamedRoutes.articlesPath(), ArticlesController::index);
+                    config.routes.get(NamedRoutes.buildArticlePath(), ArticlesController::build);
+                    config.routes.get(NamedRoutes.articlePath("{id}"), ArticlesController::show);
+                    config.routes.post(NamedRoutes.articlesPath(), ArticlesController::create);
                 });
     }
 

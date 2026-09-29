@@ -1,10 +1,7 @@
-package io.hexlet.blog;
+package org.example.hexlet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.hexlet.blog.domain.Article;
-import io.hexlet.blog.repository.ArticleRepository;
-import io.hexlet.blog.repository.BaseRepository;
 import io.javalin.Javalin;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +11,9 @@ import java.sql.SQLException;
 import java.util.stream.Collectors;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import org.example.hexlet.model.Article;
+import org.example.hexlet.repository.ArticleRepository;
+import org.example.hexlet.repository.BaseRepository;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -107,7 +107,7 @@ class AppTest {
 
         @Test
         void testNew() {
-            HttpResponse<String> response = Unirest.get(baseUrl + "/articles/new").asString();
+            HttpResponse<String> response = Unirest.get(baseUrl + "/articles/build").asString();
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(200);
