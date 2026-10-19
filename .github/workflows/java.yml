@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-java@v5.6.0
         with:
           distribution: 'temurin'
-          java-version: '25'
+          java-version: '27'
       - uses: gradle/actions/setup-gradle@v6
 
       - uses: jdx/mise-action@v5

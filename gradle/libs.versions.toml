@@ -6,16 +6,17 @@ test-logger = { id = "com.adarshr.test-logger", version.ref = "test-logger-plugi
 lombok = { id = "io.freefair.lombok", version.ref = "lombok-plugin" }
 
 [versions]
-spotless-plugin = "8.10.1"
-versions-plugin = "0.61.0"
+jacoco = "0.8.15"
+spotless-plugin = "8.10.4"
+versions-plugin = "0.66.0"
 catalog-update-plugin = "1.1.1"
 test-logger-plugin = "4.0.0"
-lombok-plugin = "9.7.0"
+lombok-plugin = "9.8.2"
 javalin = "7.2.3"
-slf4j = "2.0.18"
+slf4j = "2.0.20"
 jte = "3.2.4"
-h2 = "2.4.240"
-postgresql = "42.7.13"
+h2 = "2.5.252"
+postgresql = "42.7.14"
 hikaricp = "7.1.0"
 junit-bom = "6.1.3"
 assertj = "3.27.7"
@@ -23,6 +24,7 @@ assertj = "3.27.7"
 unirest = "3.14.5"
 
 [libraries]
+jacocoAgent = { module = "org.jacoco:org.jacoco.agent", version.ref = "jacoco" }
 # Web
 javalin = { module = "io.javalin:javalin", version.ref = "javalin" }
 javalinRenderingJte = { module = "io.javalin:javalin-rendering-jte", version.ref = "javalin" }

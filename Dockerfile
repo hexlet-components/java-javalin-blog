@@ -15,9 +15,9 @@ COPY assets ./assets
 COPY src/main/resources/templates ./src/main/resources/templates
 RUN pnpm run build:css
 
-FROM eclipse-temurin:25-jdk
+FROM eclipse-temurin:27-jdk
 
-ARG GRADLE_VERSION=9.6.1
+ARG GRADLE_VERSION=9.8.1
 
 RUN apt-get update && apt-get install -yq unzip wget
 

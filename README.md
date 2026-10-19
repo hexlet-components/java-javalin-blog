@@ -8,7 +8,7 @@ Blog on Javalin built the same way as the code of the Hexlet course «Java: Ве
 
 ## Requirements
 
-- JDK 25
+- JDK 27
 - Gradle 9.6.1
 - GNU Make
 
